@@ -6,7 +6,7 @@ Instead of combustion, the system uses an electric ducted fan (EDF) mounted on a
 
 The final system is intended to become an interactive science-center exhibit for elementary-school students, families, and school groups.
 
-> **Project Status:** Active development. The main concept has been selected, but components and design specifications are still being tested and refined.
+**Project Status:** Active development. The main concept has been selected, but components and design specifications are still being tested and refined.
 
 ## Team
 
@@ -25,7 +25,7 @@ Here are our goals:
 - Be understandable without prior engineering knowledge.
 - Operate safely and reliably in a public environment.
 - Include a brief explanation for visitors interested in the engineering.
-
+    
 ## Concept Overview
 
 The demonstrator consists of a lightweight rocket-shaped body mounted to a single-axis pivot. The pivot is positioned below the system's center of gravity, making the rocket naturally unstable.

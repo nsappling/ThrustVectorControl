@@ -8,7 +8,7 @@ The final system is intended to become an interactive science-center exhibit for
 
 **Project Status:** Active development. The main concept has been selected, but components and design specifications are still being tested and refined.
 
-## Team
+## Team.  
 
 - Nate Sapp
 - Warren Schindler

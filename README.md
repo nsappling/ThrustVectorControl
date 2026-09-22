@@ -36,6 +36,8 @@ An IMU continuously measures the rocket's angle and angular velocity. A feedback
 
 The user will interact with the system through a joystick. Depending on the final operating mode, the joystick may command a desired rocket angle, change the thrust level, or apply a temporary disturbance.
 
+fewoiewhfoiewh
+
 ## How It Works
 
 1. The IMU measures the rocket's angle and angular velocity.

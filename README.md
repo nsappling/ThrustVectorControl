@@ -17,7 +17,7 @@ The final system is intended to become an interactive science-center exhibit for
 
 ## Project Goals
 
-The completed exhibit should:
+MAKE IT WORKSKKSKS
 
 - Demonstrate thrust vector control in a visible and intuitive way.
 - Actively stabilize a rocket-like body about one rotational axis.

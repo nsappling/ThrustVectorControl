@@ -14,7 +14,7 @@ The final system is intended to become an interactive science-center exhibit for
 - Warren Schindler
 - Kailash Gupta-Verma
 - Alec Garcia
-
+hehehe
 ## Project Goals
 
 Here are our goals:

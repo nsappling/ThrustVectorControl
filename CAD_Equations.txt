@@ -1,0 +1,8 @@
+"Body_OD" = 3.5in
+"Body_ID" = 3.2in
+"Body_Height" = 12in
+"Bearing_OD" = 1.13in
+"Bearing_ID" = 0.5in
+"Body_Bearing_Hole_OD" = "Bearing_OD" + 0.01in 'with clearance
+"Pivot_Height" = 4in 'measured from bottom of tube
+"Pivot_OD" = "Bearing_ID" - 0.01in 'with clearance

@@ -77,8 +77,8 @@ plot(d.t_ms/1000, d.theta_filt_deg)
 |---|---|---|---|
 | Angle measurement | `theta + noise` | Complementary filter of gyro + accel (`COMP_TAU` = 0.5 s) | A real sensor needs fusion: the accelerometer is noisy, and the gyro drifts. |
 | Loop rate | 2000 Hz physics step | 500 Hz control loop | The gains transfer unchanged because the PID math uses `dt` explicitly. |
-| Integral | No limit | Clamped (anti-windup) | Bench testing holds large errors for seconds at a time. |
-| Safety | Mechanical stops | Servo centers if the angle is past 45° or the IMU read fails; send `run` to resume | |
+| Integral | No limit | Anti-windup: stops growing while the servo is pinned at its limit | Bench testing holds large errors for seconds at a time. |
+| Safety | Mechanical stops | Servo centers if the angle is past 45° (resumes automatically below 35°) or the IMU read fails | |
 | Servo | Instant | Servo pulse updates at 50 Hz, plus the servo's own speed | Worth adding a servo lag to `tvc_sim.m` later. |
 
 ## Before running with the fan

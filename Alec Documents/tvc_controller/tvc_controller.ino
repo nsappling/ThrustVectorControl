@@ -50,9 +50,12 @@ const float alpha = dt / (tau_filter + dt);
 // in the loop if tau is changed over serial -- see alpha_now.)
 
 const float theta_trip_deg = 45.0;
-// Safety: if the measured angle is past this, center the servo and stop
-// controlling (the real body should be resting on its stops by then,
-// and in bench testing this means the IMU was flipped/dropped).
+const float theta_resume_deg = 35.0;
+// Safety: if the measured angle is past theta_trip_deg, center the servo
+// and stop controlling (the real body should be resting on its stops by
+// then). Control resumes AUTOMATICALLY once the angle comes back inside
+// theta_resume_deg -- so tilting the IMU too far by hand during bench
+// testing no longer leaves the servo stuck until you type 'run'.
 
 // =====================================================================
 // HARDWARE CONFIGURATION -- check these against your build
@@ -114,6 +117,7 @@ float prev_error = 0.0;
 bool have_prev_error = false;   // MATLAB's prev_error = [] trick
 float alpha_now = alpha;
 bool running = true;       // false = servo held centered (tripped or "center" command)
+bool tripped = false;      // true = paused by the angle limit (auto-resumes); false + !running = "center" command
 float u = 0.0;
 int servo_us = SERVO_CENTER_US;
 
@@ -188,12 +192,18 @@ void loop() {
   // --- Low-pass filter (same line as MATLAB) ---
   theta_filt = theta_filt + alpha_now * (theta_est - theta_filt);
 
-  if (fabs(theta_filt) > radians(theta_trip_deg)) {
-    if (running) {
-      Serial.println(F("# TRIP: angle past limit, servo centered. Send 'run' to resume."));
-      center_servo();
-    }
+  // --- Angle limit trip, with automatic resume ---
+  if (running && fabs(theta_filt) > radians(theta_trip_deg)) {
+    Serial.println(F("# TRIP: angle past limit, servo centered. Resumes when back inside 35 deg."));
+    center_servo();
     running = false;
+    tripped = true;
+  } else if (tripped && fabs(theta_filt) < radians(theta_resume_deg)) {
+    Serial.println(F("# Back in range, control resumed."));
+    running = true;
+    tripped = false;
+    integral_term = 0;         // start fresh, don't carry old error history
+    have_prev_error = false;
   }
 
   if (running) {
@@ -203,14 +213,18 @@ void loop() {
       prev_error = error;      // avoid a derivative-kick on the very first sample
       have_prev_error = true;
     }
-    integral_term += error * dt;
-    // Anti-windup (NOT in the MATLAB sim): in bench testing you'll hold
-    // the IMU tilted for seconds at a time, and the servo can't move the
-    // IMU back, so the integral would grow without limit. Cap it at the
-    // amount that alone could saturate the actuator.
-    if (Ki > 0) integral_term = constrain(integral_term, -Umax_actuator / Ki, Umax_actuator / Ki);
     float derivative = (error - prev_error) / dt;
     prev_error = error;
+
+    // Anti-windup (NOT in the MATLAB sim): only let the integral grow
+    // while the actuator is NOT already pinned at its limit in the same
+    // direction. Otherwise, holding the IMU tilted on the bench (where
+    // the servo can't move it back) fills the integral up, and the servo
+    // stays stuck at full tilt for seconds after you tilt back.
+    float u_try = Kp * error + Ki * (integral_term + error * dt) + Kd * derivative;
+    bool pinned = (u_try > Umax_actuator && error > 0) || (u_try < -Umax_actuator && error < 0);
+    if (!pinned) integral_term += error * dt;
+    if (Ki > 0) integral_term = constrain(integral_term, -Umax_actuator / Ki, Umax_actuator / Ki);
 
     u = Kp * error + Ki * integral_term + Kd * derivative;
 
@@ -290,7 +304,13 @@ bool read_imu(float &acc_angle, float &gyro_rate) {
   if (IMU_USE_Y_AXIS) { a_raw = atan2(-ax, az); g_raw = radians(gy); }
   else                { a_raw = atan2(ay, az);  g_raw = radians(gx); }
 
-  acc_angle = IMU_SIGN * (a_raw - angle_offset);
+  // Wrap the difference into -180..+180 deg. atan2 jumps from +180 to
+  // -180 at one orientation; without this, crossing it would look like a
+  // sudden 360 degree tilt (-> servo slam / trip).
+  float d = a_raw - angle_offset;
+  if (d > PI) d -= 2 * PI;
+  if (d < -PI) d += 2 * PI;
+  acc_angle = IMU_SIGN * d;
   gyro_rate = IMU_SIGN * (g_raw - gyro_bias);
   return true;
 }
@@ -344,8 +364,8 @@ void run_command(char *cmd) {
   else if (!strcmp(cmd, "tau") && arg) { tau_filter = val; alpha_now = dt / (tau_filter + dt); }
   else if (!strcmp(cmd, "trim") && arg) servo_trim_us = (int)val;
   else if (!strcmp(cmd, "zero"))   { center_servo(); calibrate(); theta_filt = 0; Serial.println(F("# Re-zeroed.")); }
-  else if (!strcmp(cmd, "center")) { running = false; center_servo(); Serial.println(F("# Servo centered, control paused. 'run' to resume.")); }
-  else if (!strcmp(cmd, "run"))    { running = true; integral_term = 0; have_prev_error = false; Serial.println(F("# Running.")); }
+  else if (!strcmp(cmd, "center")) { running = false; tripped = false; center_servo(); Serial.println(F("# Servo centered, control paused. 'run' to resume.")); }
+  else if (!strcmp(cmd, "run"))    { running = true; tripped = false; integral_term = 0; have_prev_error = false; Serial.println(F("# Running.")); }
   else if (!strcmp(cmd, "help")) {
     Serial.println(F("# kp/ki/kd/tau <val>, trim <us>, zero (hold upright+still), center, run"));
   } else {

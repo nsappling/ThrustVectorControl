@@ -1,0 +1,189 @@
+# TVC demonstrator wiring harness (preliminary, rev A)
+#
+# Source for tvc_harness.svg / .png / .bom.tsv. Edit THIS file, then regenerate:
+#   pip install wireviz   (also needs Graphviz: brew/apt install graphviz)
+#   wireviz docs/wiring/tvc_harness.yml
+#
+# Must match docs/pinout.md and docs/icd/*.md. Wire IDs (P5, S1, ...) match the ICD tables.
+
+connectors:
+  INLET:
+    type: IEC C14 inlet, switch + fuse (T5A)
+    pinlabels: [L, N, PE]
+  PSU:
+    type: Mean Well LRS-600-12
+    subtype: screw terminals (set input switch to 115V!)
+    pinlabels: [AC_L, AC_N, FG, -V, -V, -V, +V, +V, +V]
+  F1:
+    type: Inline blade fuse 15A
+    pinlabels: [IN, OUT]
+  F2:
+    type: Inline blade fuse 5A
+    pinlabels: [IN, OUT]
+  XT60:
+    type: XT60 (female supply / male ESC)
+    pinlabels: ['+', '-']
+  ESC:
+    type: Hobbywing Skywalker 50A V2
+    pinlabels: [BAT+, BAT-, MOT_A, MOT_B, MOT_C, SIG, BEC_5V (NC), GND]
+  EDF:
+    type: JFtech 64mm 4300KV EDF
+    subtype: 3.5mm bullets
+    pinlabels: [A, B, C]
+  BUSLINKER:
+    type: Hiwonder BusLinker V3.0
+    subtype: jumpers = Servo + TTL
+    pinlabels: [PWR+, PWR-, TX, RX, GND, BUS_GND, BUS_V+, BUS_SIG]
+  SERVO:
+    type: Hiwonder HTD-30H (ID 1)
+    subtype: PH2.0-3P, supplied cable
+    pinlabels: [GND, V+, SIG]
+  SHIFTER:
+    type: BSS138 level shifter (4ch)
+    pinlabels: [LV, LV1, LV2, GND, HV, HV1, HV2]
+  TEENSY:
+    type: Teensy 4.0
+    subtype: 3.3V logic, NOT 5V tolerant
+    pinlabels: ['0 RX1', '1 TX1', '2 ESC', '3 INT', '18 SDA', '19 SCL', 3V3, VIN 5V, GND, USB]
+  IMU:
+    type: GY-521 (MPU-6050)
+    subtype: I2C addr 0x68
+    pinlabels: [VCC, GND, SCL, SDA, INT]
+  PI:
+    type: Raspberry Pi 5
+    subtype: own 5V 5A USB-C supply
+    pinlabels: [USB-A]
+
+cables:
+  AC:
+    category: bundle
+    gauge: 18 AWG
+    wirecount: 3
+    colors: [BN, BU, GNYE]
+    wirelabels: [P2, P3, P4]
+  EDF_PWR_A:
+    category: bundle
+    gauge: 12 AWG
+    wirecount: 2
+    colors: [RD, BK]
+    wirelabels: [P5, P7]
+  EDF_PWR_B:
+    gauge: 12 AWG
+    wirecount: 1
+    colors: [RD]
+    wirelabels: [P6]
+  ESC_IN:
+    category: bundle
+    gauge: 12 AWG
+    wirecount: 2
+    colors: [RD, BK]
+    wirelabels: [E1+, E1-]
+  PHASES:
+    category: bundle
+    gauge: 12 AWG
+    wirecount: 3
+    colors: [BK, BK, BK]
+    wirelabels: [E2 A, E2 B, E2 C]
+    notes: Swap any two phases if the fan spins backwards
+  SRV_PWR_A:
+    category: bundle
+    gauge: 18 AWG
+    wirecount: 2
+    colors: [RD, BK]
+    wirelabels: [P8, P10]
+  SRV_PWR_B:
+    gauge: 18 AWG
+    wirecount: 1
+    colors: [RD]
+    wirelabels: [P9]
+  SERVO_CABLE:
+    category: bundle
+    type: Hiwonder PH2.0 servo cable (supplied)
+    wirecount: 3
+    colors: [BK, RD, YE]
+  ESC_SIG:
+    category: bundle
+    gauge: 26 AWG
+    wirecount: 2
+    colors: [WH, BK]
+    wirelabels: [E3, E4]
+    notes: ESC red BEC wire left disconnected
+  UART_HV:
+    category: bundle
+    gauge: 26 AWG
+    wirecount: 4
+    colors: [OG, YE, RD, BK]
+    wirelabels: [S3 TX to HV1, S2 HV2 to RX, S6 5V, S7 GND]
+  UART_LV:
+    category: bundle
+    gauge: 26 AWG
+    wirecount: 4
+    colors: [OG, YE, RD, BK]
+    wirelabels: [S4 LV1 to RX1, S1 TX1 to LV2, S5 3V3, S7 GND]
+  I2C:
+    category: bundle
+    gauge: 26 AWG
+    wirecount: 5
+    colors: [RD, BK, YE, GN, WH]
+    wirelabels: [I1, I2, I3, I4, I5]
+  USB:
+    type: USB-A to micro-USB data cable
+    wirecount: 1
+    colors: [GY]
+
+connections:
+  # --- AC ---
+  - - INLET: [1, 2, 3]
+    - AC: [1, 2, 3]
+    - PSU: [1, 2, 3]
+  # --- EDF branch ---
+  - - PSU: [7, 4]
+    - EDF_PWR_A: [1, 2]
+  - - EDF_PWR_A: [1]
+    - F1: [1]
+  - - EDF_PWR_A: [2]
+    - XT60: [2]
+  - - F1: [2]
+    - EDF_PWR_B: [1]
+    - XT60: [1]
+  - - XT60: [1, 2]
+    - ESC_IN: [1, 2]
+    - ESC: [1, 2]
+  - - ESC: [3, 4, 5]
+    - PHASES: [1, 2, 3]
+    - EDF: [1, 2, 3]
+  # --- Servo branch ---
+  - - PSU: [8, 5]
+    - SRV_PWR_A: [1, 2]
+  - - SRV_PWR_A: [1]
+    - F2: [1]
+  - - SRV_PWR_A: [2]
+    - BUSLINKER: [2]
+  - - F2: [2]
+    - SRV_PWR_B: [1]
+    - BUSLINKER: [1]
+  - - BUSLINKER: [6, 7, 8]
+    - SERVO_CABLE: [1, 2, 3]
+    - SERVO: [1, 2, 3]
+  # --- Signals ---
+  - - ESC: [6, 8]
+    - ESC_SIG: [1, 2]
+    - TEENSY: [3, 9]
+  - - BUSLINKER: [3, 4]
+    - UART_HV: [1, 2]
+    - SHIFTER: [6, 7]
+  - - SHIFTER: [5, 4]
+    - UART_HV: [3, 4]
+  - - SHIFTER: [2, 3, 1, 4]
+    - UART_LV: [1, 2, 3, 4]
+    - TEENSY: [1, 2, 7, 9]
+  - - UART_HV: [3]
+    - TEENSY: [8]
+  - - UART_HV: [4]
+    - BUSLINKER: [5]
+  - - IMU: [1, 2, 3, 4, 5]
+    - I2C: [1, 2, 3, 4, 5]
+    - TEENSY: [7, 9, 6, 5, 4]
+  - - TEENSY: [10]
+    - USB: [1]
+    - PI: [1]

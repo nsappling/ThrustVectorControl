@@ -11,7 +11,7 @@ function fname = log_serial(port, duration_s)
 % IMPORTANT: close the Arduino IDE's Serial Monitor first -- only one
 % program can use the port at a time.
 %
-% Files are saved to Alec Documents/data/log_YYYYMMDD_HHMMSS.csv. Every
+% Files are saved to sim/pid_animation/data/log_YYYYMMDD_HHMMSS.csv. Every
 % line is written to disk as it arrives, so nothing is lost if you stop
 % early (close the plot window, or Ctrl+C). Load a log afterwards with:
 %   d = readtable('data/log_....csv');  plot(d.t_ms/1000, d.angle_deg)

@@ -8,7 +8,7 @@
 // finally mounted on the body and the fan is running, this same code
 // closes the real loop.
 //
-// Wiring (see README_hardware.md in this folder for details):
+// Wiring (see README.md in this folder for details):
 //   GY-521 VCC -> 5V           GY-521 GND -> GND
 //   GY-521 SDA -> SDA pin      GY-521 SCL -> SCL pin  (same as A4/A5)
 //   Servo signal (orange/yellow) -> D4
@@ -76,7 +76,7 @@ int servo_trim_us = 0;
 
 const float SERVO_DIR = 1.0;
 // +1 or -1. Flip if the fan swings the WRONG way in the direction check
-// (README_hardware.md). This is the hardware equivalent of MATLAB's
+// (README.md in this folder). This is the hardware equivalent of MATLAB's
 // "b must be positive" -- wrong sign = positive feedback = falls over.
 
 const float GIMBAL_RATIO = 1.0;

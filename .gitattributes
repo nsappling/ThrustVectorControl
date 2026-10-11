@@ -1,0 +1,15 @@
+# Binary CAD: never diff or merge. If two people edit the same part, one wins.
+*.SLDPRT binary
+*.SLDASM binary
+*.SLDDRW binary
+*.STL    binary
+*.STEP   binary
+*.step   binary
+
+# Normalize line endings for code (team uses macOS + Windows)
+*.ino text eol=lf
+*.h   text eol=lf
+*.cpp text eol=lf
+*.py  text eol=lf
+*.m   text eol=lf
+*.md  text eol=lf

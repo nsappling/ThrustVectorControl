@@ -3,7 +3,7 @@
 % Safe to run with `matlab -batch` (no interactive windows; figures are
 % saved as PNGs instead of shown).
 %
-%   matlab -batch "run('Alec Documents/tune_pid.m')"
+%   matlab -batch "run('sim/pid_animation/tune_pid.m')"
 %
 % What it does:
 %   1. Simulates the CURRENT gains from rocketgimball.m and prints
@@ -12,7 +12,7 @@
 %      loop poles and phase margin of the linearized plant + filter + PID.
 %   3. Sweeps Kp x Kd (Ki held fixed), scores every combination over
 %      several noise seeds, and reports the best gains.
-%   4. Saves plots to Alec Documents/results/.
+%   4. Saves plots to sim/pid_animation/results/.
 %
 % REMEMBER: F_t, R, m, r_0 are still guesses, so the "best" gains are
 % only as good as those numbers. Re-run once they're measured.

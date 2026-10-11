@@ -1,0 +1,24 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# SolidWorks lock/temp files (~$Part.SLDPRT)
+~$*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# MATLAB
+*.asv
+*.mex*
+slprj/
+
+# Test logs: commit only the ones worth keeping (put those in data/ with a note)
+tvc_log_*.csv
+sim/pid_animation/data/
+
+# Arduino build output
+build/

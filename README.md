@@ -49,3 +49,23 @@ The user will interact with the system through a joystick. Depending on the fina
 The controller error is defined as:
 
 error = desired angle - measured angle
+## Repository Layout
+
+```
+firmware/   Flight computer code (Arduino Uno now, Teensy 4.0 later)
+ground/     Raspberry Pi 5 code: logging, tuning, later the joystick/exhibit UI
+sim/        MATLAB simulations and controller design
+cad/        SolidWorks parts/assemblies and STLs for printing
+docs/       Sketches now; electrical ICDs and wiring docs next
+```
+
+Each folder has a short README that explains what's in it.
+
+## Workflow
+
+1. **Pull before you start:** `git pull`. CAD files can't be merged, so pull before you open SolidWorks.
+2. **Make the change.** Edit firmware in the Arduino IDE (open the `.ino` straight from `firmware/`), or ask Claude to edit it, then upload and test.
+3. **Commit what works**, with a message that says what changed and whether it was tested on hardware. For example: `tvc_controller: lower Kd to 0.03, tested on bench`.
+4. **Push:** `git push`.
+
+Commit gains you settle on into the code. Keep only the test logs worth keeping.

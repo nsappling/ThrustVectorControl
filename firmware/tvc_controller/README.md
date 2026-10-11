@@ -1,6 +1,6 @@
 # TVC controller: hardware setup and bench test
 
-`tvc_controller.ino` is the Arduino version (SparkFun RedBoard, Uno-compatible) of the AUTO-mode controller in `rocketgimball.m` / `tvc_sim.m`: the same low-pass filter, PID, ±35° saturation, and fan-tilt sign convention.
+`tvc_controller.ino` is the Arduino version (SparkFun RedBoard, Uno-compatible) of the AUTO-mode controller in `sim/pid_animation/rocketgimball.m` / `tvc_sim.m`: the same low-pass filter, PID, ±35° saturation, and fan-tilt sign convention.
 
 ## System layout
 
@@ -59,7 +59,7 @@ Do these checks **in order**. Keep the fan unpowered.
 
 ```bash
 pip install pyserial
-python3 tvc_logger.py
+python3 ground/tvc_logger.py
 ```
 
 Type commands such as `kp 0.5`, `kd 0.035`, `tau 0.02`, `zero`, `center`, `run`, or `help`. They take effect immediately, but aren't saved when the board powers off. Copy any gains you settle on into the sketch.

@@ -1,0 +1,33 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, 1 x 12 AWG	0	m	EDF_PWR_B
+2	Cable, 1 x 18 AWG	0	m	SRV_PWR_B
+3	Cable, USB-A to micro-USB data cable, 1 wires	0	m	USB
+4	Connector, BSS138 level shifter (4ch), 7 pins	1		SHIFTER
+5	Connector, GY-521 (MPU-6050), I2C addr 0x68, 5 pins	1		IMU
+6	Connector, Hiwonder BusLinker V3.0, jumpers = Servo + TTL, 8 pins	1		BUSLINKER
+7	Connector, Hiwonder HTD-30H (ID 1), PH2.0-3P, supplied cable, 3 pins	1		SERVO
+8	Connector, Hobbywing Skywalker 50A V2, 8 pins	1		ESC
+9	Connector, IEC C14 inlet, switch + fuse (T5A), 3 pins	1		INLET
+10	Connector, Inline blade fuse 15A, 2 pins	1		F1
+11	Connector, Inline blade fuse 5A, 2 pins	1		F2
+12	Connector, JFtech 64mm 4300KV EDF, 3.5mm bullets, 3 pins	1		EDF
+13	Connector, Mean Well LRS-600-12, screw terminals (set input switch to 115V!), 9 pins	1		PSU
+14	Connector, Raspberry Pi 5, own 5V 5A USB-C supply, 1 pins	1		PI
+15	Connector, Teensy 4.0, 3.3V logic, NOT 5V tolerant, 10 pins	1		TEENSY
+16	Connector, XT60 (female supply / male ESC), 2 pins	1		XT60
+17	Wire, 12 AWG, BK	0	m	EDF_PWR_A, ESC_IN, PHASES
+18	Wire, 12 AWG, RD	0	m	EDF_PWR_A, ESC_IN
+19	Wire, 18 AWG, BK	0	m	SRV_PWR_A
+20	Wire, 18 AWG, BN	0	m	AC
+21	Wire, 18 AWG, BU	0	m	AC
+22	Wire, 18 AWG, GNYE	0	m	AC
+23	Wire, 18 AWG, RD	0	m	SRV_PWR_A
+24	Wire, 26 AWG, BK	0	m	ESC_SIG, I2C, UART_HV, UART_LV
+25	Wire, 26 AWG, GN	0	m	I2C
+26	Wire, 26 AWG, OG	0	m	UART_HV, UART_LV
+27	Wire, 26 AWG, RD	0	m	I2C, UART_HV, UART_LV
+28	Wire, 26 AWG, WH	0	m	ESC_SIG, I2C
+29	Wire, 26 AWG, YE	0	m	I2C, UART_HV, UART_LV
+30	Wire, Hiwonder PH2.0 servo cable (supplied), BK	0	m	SERVO_CABLE
+31	Wire, Hiwonder PH2.0 servo cable (supplied), RD	0	m	SERVO_CABLE
+32	Wire, Hiwonder PH2.0 servo cable (supplied), YE	0	m	SERVO_CABLE

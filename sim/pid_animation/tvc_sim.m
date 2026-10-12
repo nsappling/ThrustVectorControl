@@ -14,7 +14,8 @@ function out = tvc_sim(p, T)
 % parameters there.
 %
 % Output struct fields:
-%   t, theta, theta_filt, u   -- time histories (column vectors, rad / rad / u)
+%   t, theta, theta_dot, theta_filt, u -- time histories (column vectors,
+%                             rad / rad/s / rad / u)
 %   p                         -- the full parameter set actually used
 %   a, b, Umax, theta_limit   -- derived constants (same meaning as rocketgimball.m)
 %   hit_stop                  -- true if the body ever reached the mechanical stops
@@ -37,6 +38,7 @@ rs = RandStream('twister', 'Seed', p.seed);
 N = round(T / p.dt);
 t          = (0:N)' * p.dt;
 theta_h    = zeros(N+1, 1);
+thdot_h    = zeros(N+1, 1);
 filt_h     = zeros(N+1, 1);
 u_h        = zeros(N+1, 1);
 
@@ -80,7 +82,7 @@ for k = 1:N
     u = max(-Umax, min(Umax, u));
 
     % --- Physics: semi-implicit Euler, full sin(theta) gravity torque ---
-    theta_ddot = b*u + a*sin(theta);
+    theta_ddot = b*u + a*sin(theta) + dist_at(p.dist_accel, t(k));
     theta_dot  = theta_dot + theta_ddot * p.dt;
     theta      = theta + theta_dot * p.dt;
 
@@ -92,11 +94,12 @@ for k = 1:N
     end
 
     theta_h(k+1) = theta;
+    thdot_h(k+1) = theta_dot;
     filt_h(k+1)  = theta_filt;
     u_h(k+1)     = u;
 end
 
-out = struct('t', t, 'theta', theta_h, 'theta_filt', filt_h, 'u', u_h, ...
+out = struct('t', t, 'theta', theta_h, 'theta_dot', thdot_h, 'theta_filt', filt_h, 'u', u_h, ...
              'p', p, 'a', a, 'b', b, 'Umax', Umax, 'theta_limit', theta_limit, ...
              'hit_stop', hit_stop);
 end
@@ -124,7 +127,15 @@ function d = tvc_defaults()
     d.theta0 = 0.2;         % [rad] initial tip
     d.ref = 0.0;            % [rad] target angle
     d.kicks = [];           % [time_s, delta_theta_rad] rows
+    d.dist_accel = 0;       % [rad/s^2] disturbance angular acceleration: a
+                            % constant, or a function handle @(t) (e.g. a
+                            % steady push/wind torque divided by inertia)
     d.seed = 1;             % noise seed
+end
+
+function x = dist_at(d, t)
+    % Disturbance angular acceleration at time t (constant or @(t)).
+    if isa(d, 'function_handle'), x = d(t); else, x = d; end
 end
 
 function p = fill_defaults(p)

@@ -1,15 +1,7 @@
 %% rocketgimball.m
-% MATLAB port of rocketgimball.py: a top-heavy "rocket" balanced on a
-% pivot, stabilized by a PID controller vectoring a ducted fan mounted
-% on a servo below the pivot. Same physics/control logic as the Python
-% turtle version -- this file just swaps turtle graphics for MATLAB's
-% patch/line graphics objects, updated every frame with drawnow.
-
 clear; clc; close all;
 
-% =====================================================================
 % PHYSICAL / CONTROL PARAMETERS
-% =====================================================================
 
 dt = 0.0005;
 % Physics timestep, in seconds.
@@ -50,8 +42,8 @@ VIS_SCALE = 200;
 
 fan_tilt_max_deg = 35;
 % Physical limit on how far the fan/servo can gimbal, in degrees. Used
-% both to clamp the autopilot's visual fan tilt AND to size the manual
-% control's authority below.
+% both to clamp the autopilot's visual fan tilt AND as the range of the
+% manual-control dial.
 
 % --- Actuator saturation (applies in BOTH modes -- a real servo has ---
 % --- a hard limit no matter who/what is commanding it)              ---
@@ -63,12 +55,17 @@ Umax_actuator = fan_tilt_max_deg / VIS_SCALE;
 % to accel_cmd in the main loop so the physics can never assume more
 % authority than the drawing shows.
 
-manual_decay_tau = 0.02;     % seconds; how fast u relaxes back to 0 when no key is held
-% NOTE: this plant tips over on a ~55ms timescale (sqrt(a) ~= 18
-% rad/s), which is close to or faster than human reaction time. Manual
-% control snaps straight to +/-Umax while a key is held (no ramp-up
-% delay) -- any added lag here beyond human reaction time makes the
-% rocket essentially unrecoverable by hand, verified numerically.
+sim_speed = 0.25;
+% Playback speed: 1 = real time, 0.25 = 4x slow motion. Changeable live
+% from the dropdown in the window. The animation is paced to the wall
+% clock, so this is a TRUE speed no matter how fast the computer draws.
+% NOTE: this plant tips over on a ~55ms timescale (1/sqrt(a), sqrt(a) ~=
+% 18 rad/s), faster than human reaction time (~200 ms). At 1x, flying it
+% by hand with the dial is close to impossible -- that's the point of
+% the demo (TVC needs a computer). Slow motion makes manual mode playable.
+
+dial_step_deg = 2;
+% How far one press of the Left/Right (or A/D) key turns the dial.
 
 % --- Mechanical stops (pins) ---
 % Real hardware will have a physical limit -- pins or a bumper -- that
@@ -91,7 +88,7 @@ theta_filt = 0.0;    % filtered angle estimate (what the controller sees)
 integral_term = 0.0;  % running integral of error
 prev_error = [];    % previous error, [] = "not measured yet" (like Python's None)
 ref = 0.0;           % target angle: upright
-manual_u = 0.0;       % current manually-commanded control signal (MANUAL mode only)
+sim_time = 0.0;       % simulated time elapsed (s), used for the periodic kicks
 
 % =====================================================================
 % FIGURE / GRAPHICS SETUP
@@ -119,10 +116,17 @@ body_local = [
     15,  Lu-40;
 ];
 
-fig = figure('Color', 'w');
-ax = axes(fig); hold(ax, 'on'); axis(ax, 'equal');
+% The window is a uifigure so it can hold a real dial (uiknob) next to
+% the animation: left = animation axes, right = control panel.
+fig = uifigure('Name', 'Rocket TVC Demo (MATLAB)', 'Color', 'w', ...
+               'Position', [100 100 1000 640]);
+layout = uigridlayout(fig, [1 2], 'ColumnWidth', {'1x', 240});
+
+ax = uiaxes(layout); hold(ax, 'on'); axis(ax, 'equal');
 xlim(ax, [-300 300]); ylim(ax, [-300 300]);
 title(ax, 'Rocket TVC Demo (MATLAB)');
+ax.XTick = []; ax.YTick = []; ax.XColor = 'none'; ax.YColor = 'none';
+disableDefaultInteractivity(ax);   % no accidental pan/zoom while flying
 
 plot(ax, pivot_x, pivot_y, 'k.', 'MarkerSize', 20); % fixed pivot dot, drawn once
 
@@ -153,73 +157,127 @@ fanArrow = quiver(ax, 0, 0, 0, 0, 'AutoScale', 'off', 'Color', [0.70 0.13 0.13],
 % direction the exhaust is being aimed (thrust direction), not just an
 % abstract housing line.
 
-statusText = text(ax, -290, 270, '', 'FontSize', 11, 'FontWeight', 'bold', ...
+statusText = text(ax, -290, 290, '', 'FontSize', 11, 'FontWeight', 'bold', ...
                        'VerticalAlignment', 'top');
 % On-screen mode/instructions readout, updated every frame.
 
 % =====================================================================
-% USER INPUT: keyboard-controlled manual fan tilt
-% Left/Right arrow keys (or A/D) ramp the fan tilt manually; M toggles
-% between AUTO (the PID autopilot demo) and MANUAL (you fly it by
-% hand). Key state is stored with setappdata/getappdata on the figure
+% CONTROL PANEL (right side): mode switch, thrust-vector dial, speed,
+% kick button, live readouts.
+% =====================================================================
+
+panel = uigridlayout(layout, [9 1], 'RowHeight', {30, 22, 190, 22, 30, 22, 30, 30, '1x'}, ...
+                     'Padding', [10 10 10 10]);
+
+modeSwitch = uiswitch(panel, 'slider', 'Items', {'AUTO', 'MANUAL'}, 'Value', 'AUTO');
+% AUTO = PID autopilot flies it; MANUAL = you fly it with the dial.
+
+uilabel(panel, 'Text', 'Fan tilt (thrust vector), deg', 'FontWeight', 'bold', ...
+        'HorizontalAlignment', 'center');
+
+dial = uiknob(panel, 'continuous', 'Limits', [-fan_tilt_max_deg fan_tilt_max_deg], ...
+              'MajorTicks', [-35 -20 -10 0 10 20 35], 'Value', 0, 'Enable', 'off');
+% The dial angle IS the fan tilt: turning it clockwise swings the
+% exhaust clockwise, same as the red arrow. In AUTO it's greyed out and
+% just shows what the autopilot is commanding; in MANUAL it's yours.
+
+dialLabel = uilabel(panel, 'Text', '0.0 deg', 'HorizontalAlignment', 'center', ...
+                    'FontSize', 14);
+
+centerBtn = uibutton(panel, 'Text', 'Center dial (Space)', 'Enable', 'off');
+
+uilabel(panel, 'Text', 'Simulation speed', 'FontWeight', 'bold', ...
+        'HorizontalAlignment', 'center');
+speedMenu = uidropdown(panel, 'Items', {'1x (real time)', '0.5x', '0.25x', '0.1x'}, ...
+                       'ItemsData', [1 0.5 0.25 0.1], 'Value', sim_speed);
+
+kickBtn = uibutton(panel, 'Text', 'Kick the rocket (K)');
+
+readout = uilabel(panel, 'Text', '', 'VerticalAlignment', 'top', 'WordWrap', 'on');
+% Live numbers: angle, rate, fan tilt, sim time.
+
+% =====================================================================
+% USER INPUT
+% The dial (or Left/Right arrows, A/D) sets the fan tilt in MANUAL mode;
+% the switch (or M) toggles AUTO/MANUAL; K or the button kicks the
+% rocket. All of it is stored with setappdata/getappdata on the figure
 % because MATLAB callbacks fire asynchronously between drawnow calls --
 % this is the standard way to share state between a callback and a
 % running script loop.
 % =====================================================================
 
-setappdata(fig, 'leftDown', false);
-setappdata(fig, 'rightDown', false);
 setappdata(fig, 'manualMode', false);   % start in AUTO mode
+setappdata(fig, 'dialDeg', 0);          % manual fan-tilt command, degrees
+setappdata(fig, 'kickRequest', false);
+setappdata(fig, 'dialMovedByKey', false);   % keys/button changed dialDeg -> move the on-screen dial to match
 
-fig.KeyPressFcn   = @keyDownCB;
-fig.KeyReleaseFcn = @keyUpCB;
+modeSwitch.ValueChangedFcn = @(src, ~) setappdata(fig, 'manualMode', strcmp(src.Value, 'MANUAL'));
+dial.ValueChangingFcn = @(~, evt) setappdata(fig, 'dialDeg', evt.Value);   % live, while dragging
+dial.ValueChangedFcn  = @(src, ~) setappdata(fig, 'dialDeg', src.Value);   % on release
+centerBtn.ButtonPushedFcn = @(~, ~) set_dial(fig, 0);
+kickBtn.ButtonPushedFcn   = @(~, ~) setappdata(fig, 'kickRequest', true);
+fig.WindowKeyPressFcn = @(src, evt) keyDownCB(src, evt, dial_step_deg, fan_tilt_max_deg);
+
 
 % =====================================================================
 % SIMULATION LOOP
 % =====================================================================
 
-substeps_per_frame = 4;
-kick_interval_frames = 1000;   % periodically bump the rocket so there's always something to watch
+kick_interval_s = 2.0;   % AUTO mode: bump the rocket every 2 s of sim time so there's always something to watch
+next_kick_time = kick_interval_s;
+max_substeps = 200;      % cap per frame (= 0.1 s of sim time) so a slow frame can't stall the loop
 
 wasManualMode = false;   % tracks the previous frame's mode, to detect AUTO<->MANUAL transitions
-frame = 0;
+u_last = 0.0;
+frameClock = tic;
 
-while ishandle(fig)   % run until the user closes the window
-    frame = frame + 1;
+while isvalid(fig)   % run until the user closes the window
 
-    % --- Read current key state / mode (set asynchronously by the callbacks) ---
-    leftDown   = getappdata(fig, 'leftDown');
-    rightDown  = getappdata(fig, 'rightDown');
+    % --- Read current mode / dial / buttons (set asynchronously by the callbacks) ---
     manualMode = getappdata(fig, 'manualMode');
+    sim_speed  = speedMenu.Value;
 
     % --- Handle AUTO <-> MANUAL transitions cleanly ---
     if manualMode && ~wasManualMode
-        manual_u = 0.0;   % start manual input centered
+        % Bumpless handover: the dial starts wherever the autopilot left
+        % the fan, so taking control doesn't jerk the thrust vector.
+        setappdata(fig, 'dialDeg', dial.Value);
+        dial.Enable = 'on'; centerBtn.Enable = 'on';
+        modeSwitch.Value = 'MANUAL';   % keep the switch in sync if M was pressed
     elseif ~manualMode && wasManualMode
         integral_term = 0.0;   % don't let the autopilot inherit a stale integral/derivative history
         prev_error = [];        % from whatever the rocket was doing under manual control
+        dial.Enable = 'off'; centerBtn.Enable = 'off';
+        modeSwitch.Value = 'AUTO';
     end
     wasManualMode = manualMode;
 
-    % --- Random disturbance: only in AUTO mode, so it doesn't fight the user's own input ---
-    if ~manualMode && frame > 1 && mod(frame, kick_interval_frames) == 0
+    % --- Disturbances: the Kick button (any mode), plus automatic ---
+    % --- kicks in AUTO mode only, so they don't fight the user's input ---
+    if getappdata(fig, 'kickRequest')
         theta = theta + sign(randn) * (0.12 + 0.10*rand);
+        setappdata(fig, 'kickRequest', false);
+    end
+    if ~manualMode && sim_time >= next_kick_time
+        theta = theta + sign(randn) * (0.12 + 0.10*rand);
+        next_kick_time = sim_time + kick_interval_s;
+    elseif manualMode
+        next_kick_time = sim_time + kick_interval_s;
     end
 
-    u_last = 0.0;
-    for k = 1:substeps_per_frame
+    % --- Real-time pacing: simulate exactly as much time as actually ---
+    % --- passed on the wall clock (times sim_speed) since last frame. ---
+    wall_dt = toc(frameClock); frameClock = tic;
+    nsub = min(max_substeps, max(1, round(wall_dt * sim_speed / dt)));
+
+    % Manual command from the dial: dial angle = fan tilt in degrees.
+    % Fan tilt is drawn as -u*VIS_SCALE (see the sign note below), so
+    % u = -dial/VIS_SCALE.
+    manual_u = -getappdata(fig, 'dialDeg') / VIS_SCALE;
+
+    for k = 1:nsub
 
         if manualMode
-            % --- Manual control: snap straight to +/-Umax while a key is ---
-            % --- held (no ramp-up lag -- see the note above on why),   ---
-            % --- and relax back toward 0 quickly when released.        ---
-            if rightDown && ~leftDown
-                manual_u = Umax_actuator;
-            elseif leftDown && ~rightDown
-                manual_u = -Umax_actuator;
-            else
-                manual_u = manual_u - (dt / (manual_decay_tau + dt)) * manual_u;
-            end
             u = manual_u;
         else
             % --- Simulated IMU measurement ---
@@ -267,6 +325,7 @@ while ishandle(fig)   % run until the user closes the window
             theta_dot = 0;
         end
     end
+    sim_time = sim_time + nsub * dt;
 
     % --- Visual fan tilt for drawing -- SIGN FLIPPED relative to u ---
     % Our rotate_pt() convention is clockwise-positive (verified: growing
@@ -284,12 +343,26 @@ while ishandle(fig)   % run until the user closes the window
     draw_scene(bodyPatch, fanArrow, body_local, pivot_x, pivot_y, Ll, Lf, theta, fan_tilt_rad);
 
     if manualMode
-        statusText.String = sprintf('MANUAL -- Left/Right arrows (or A/D) to gimbal the fan.  [M] = back to AUTO');
+        statusText.String = sprintf('MANUAL -- turn the dial (or Left/Right, A/D) to aim the fan.  [M] = AUTO');
         statusText.Color = [0.70 0.13 0.13];
     else
         statusText.String = sprintf('AUTO -- PID autopilot balancing itself.  [M] = take manual control');
         statusText.Color = [0.13 0.35 0.13];
+        dial.Value = fan_tilt_deg;   % dial mirrors what the autopilot is commanding
     end
+    if getappdata(fig, 'dialMovedByKey')
+        % Keyboard/button turned the dial: move the on-screen knob to
+        % match. (Not done every frame -- that would fight a mouse drag.)
+        dial.Value = getappdata(fig, 'dialDeg');
+        setappdata(fig, 'dialMovedByKey', false);
+    end
+    dialLabel.Text = sprintf('%+.1f deg', fan_tilt_deg);
+    readout.Text = sprintf(['Body angle:  %+6.1f deg\nAngle rate:  %+6.0f deg/s\n' ...
+                            'Fan tilt:    %+6.1f deg\nSim time:    %6.1f s  (%gx)\n\n' ...
+                            'Tip: turn the dial TOWARD the side the rocket is leaning.\n\n' ...
+                            'Stops at +/-%g deg. Fan can only recover up to %.0f deg.'], ...
+                           rad2deg(theta), rad2deg(theta_dot), fan_tilt_deg, sim_time, sim_speed, ...
+                           theta_limit_deg, max_recoverable_deg);
 
     drawnow;
 end
@@ -329,27 +402,34 @@ function draw_scene(bodyPatch, fanArrow, body_local, pivot_x, pivot_y, Ll, Lf, t
     set(fanArrow, 'XData', mount(1), 'YData', mount(2), 'UData', fx, 'VData', fy);
 end
 
-function keyDownCB(src, event)
-    % Fires while a key is held down (figure's KeyPressFcn). Just
-    % records which keys are currently pressed / toggles the mode --
-    % the actual control logic lives in the main loop, which polls
-    % this state every frame via getappdata.
+function keyDownCB(fig, event, step_deg, max_deg)
+    % Fires on every key press in the window (WindowKeyPressFcn), even
+    % while the dial or a button has focus. Only records the request --
+    % the actual control logic lives in the main loop, which polls this
+    % state every frame via getappdata. Holding a key auto-repeats, so
+    % holding Left/Right keeps turning the dial.
+    manual = getappdata(fig, 'manualMode');
     switch event.Key
         case {'leftarrow', 'a'}
-            setappdata(src, 'leftDown', true);
+            if manual, nudge_dial(fig, -step_deg, max_deg); end
         case {'rightarrow', 'd'}
-            setappdata(src, 'rightDown', true);
+            if manual, nudge_dial(fig, +step_deg, max_deg); end
+        case 'space'
+            if manual, set_dial(fig, 0); end
+        case 'k'
+            setappdata(fig, 'kickRequest', true);
         case 'm'
-            setappdata(src, 'manualMode', ~getappdata(src, 'manualMode'));
+            setappdata(fig, 'manualMode', ~manual);
     end
 end
 
-function keyUpCB(src, event)
-    % Fires when a key is released (figure's KeyReleaseFcn).
-    switch event.Key
-        case {'leftarrow', 'a'}
-            setappdata(src, 'leftDown', false);
-        case {'rightarrow', 'd'}
-            setappdata(src, 'rightDown', false);
-    end
+function nudge_dial(fig, delta, max_deg)
+    v = getappdata(fig, 'dialDeg') + delta;
+    set_dial(fig, max(-max_deg, min(max_deg, v)));
+end
+
+function set_dial(fig, deg)
+    % Set the manual fan-tilt command from the keyboard or Center button.
+    setappdata(fig, 'dialDeg', deg);
+    setappdata(fig, 'dialMovedByKey', true);
 end

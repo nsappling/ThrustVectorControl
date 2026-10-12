@@ -34,32 +34,54 @@ if batchStartupOptionUsed, vis = 'off'; end   % -batch: save figures, don't show
 base = tvc_sim(struct(), 0.001);
 p = base.p; a = base.a; b = base.b; Umax = base.Umax;
 lim_deg = p.theta_limit_deg;
-quiet = struct('sigma_noise', 0);   % noise-free runs, for clean textbook metrics
+quiet = struct('noise', false);   % noise-free runs, for clean textbook metrics
 
 S = {};   % summary lines, printed and saved at the end
 S{end+1} = sprintf('rocketgimball.m behavior summary   (%s)', string(datetime('now', 'Format', 'yyyy-MM-dd HH:mm')));
-S{end+1} = sprintf('Gains: Kp = %.3f, Ki = %.3f, Kd = %.4f;  filter tau = %.3f s;  IMU noise = %.3f rad', ...
-                   p.Kp, p.Ki, p.Kd, p.tau_filter, p.sigma_noise);
-S{end+1} = sprintf('Plant: a = g/r_0 = %.1f 1/s^2, b = F_t*R/(m*r_0^2) = %.1f, fan limit = +/-%g deg (Umax = %.3f)', ...
-                   a, b, p.fan_tilt_max_deg, Umax);
+S{end+1} = sprintf('Gains: Kp = %.3f, Ki = %.3f, Kd = %.4f (D from gyro);  filter tau = %.3f s', ...
+                   p.Kp, p.Ki, p.Kd, p.tau_filter);
+S{end+1} = sprintf('IMU noise [EST]: accel angle %.3f rad, gyro %.4f rad/s per sample; complementary filter tau = %.2f s', ...
+                   p.sigma_acc, p.sigma_gyro, p.tau_comp);
+S{end+1} = sprintf('Plant: uniform cylinder %.0f cm x %.1f cm dia, pivot %.1f cm below its center -> I = %.4f kg m^2', ...
+                   100*p.L_body, 200*p.r_body, 100*p.r_0, base.I);
+S{end+1} = sprintf('       a = m*g*r_0/I = %.1f 1/s^2, b = F_t*R/I = %.1f, fan limit = +/-%g deg', ...
+                   a, b, p.fan_tilt_max_deg);
 S{end+1} = '  (F_t, R, m, r_0 are ESTIMATES -- all numbers below depend on them)';
 
 % =====================================================================
-% LINEAR MODEL (small angles: sin(theta) ~ theta)
-%   Plant        theta'' = a*theta + b*u + d     G  = b/(s^2 - a),  Gd = 1/(s^2 - a)
-%   IMU filter   1/(tau*s + 1)                    F
-%   PID          Kp + Ki/s + Kd*s                 C  (acts on ref - filtered theta)
-%   Loop gain    L = C*F*G
-%   ref -> theta T = C*G/(1 + L)     disturbance -> theta  Td = Gd/(1 + L)
+% LINEAR MODEL -- the same loop as rocketgimball.m, written as transfer
+% functions (Laplace domain, s = d/dt) so the Control System Toolbox can
+% compute poles, margins and step responses exactly.
+%
+% Small angles: sin(theta) ~ theta and sin(u) ~ u, so the plant is
+%   theta'' = a*theta + b*u + d     ->  theta = G*u + Gd*d
+%   G  = b/(s^2 - a)   (fan tilt -> angle; the s^2 - a is the instability)
+%   Gd = 1/(s^2 - a)   (disturbance acceleration d -> angle)
+%
+% Sensors: with noise switched off, the complementary filter returns the
+% true angle exactly (its gyro and accel paths add up to 1), so it drops
+% out of the linear model. What's left:
+%   F = 1/(tau_filter*s + 1)  the low-pass on the angle used by P and I
+%   the gyro gives theta' directly, so the D term is  -Kd*s*theta  (no filter)
+%
+% Controller (step 5 in rocketgimball.m):
+%   u = (Kp + Ki/s)*(ref - F*theta) - Kd*s*theta
+%
+% Loop gain: break the loop at the plant input and go once around:
+%   L = ((Kp + Ki/s)*F + Kd*s) * G
+% Closed loop (solve the equations above for theta):
+%   ref -> theta:  T  = (Kp + Ki/s)*G / (1 + L)
+%   d   -> theta:  Td = Gd / (1 + L)
+% Both have the same poles: the roots of 1 + L = 0.
 % =====================================================================
 
 s = tf('s');
 G  = b / (s^2 - a);
 Gd = 1 / (s^2 - a);
 F  = 1 / (p.tau_filter*s + 1);
-C  = pid(p.Kp, p.Ki, p.Kd);
-L  = C * F * G;
-T  = minreal(C * G / (1 + L));
+Kpi = p.Kp + p.Ki/s;           % the P and I terms together
+L  = (Kpi * F + p.Kd * s) * G;
+T  = minreal(Kpi * G / (1 + L));
 Td = minreal(Gd / (1 + L));
 CL = feedback(L, 1);           % same poles as T and Td
 
@@ -73,7 +95,7 @@ t_double = log(2) / lam;
 th0_ol = deg2rad(1);
 t_stop_lin = acosh(deg2rad(lim_deg) / th0_ol) / lam;
 
-ol = tvc_sim(struct('Kp', 0, 'Ki', 0, 'Kd', 0, 'sigma_noise', 0, 'theta0', th0_ol), 0.6);
+ol = tvc_sim(struct('Kp', 0, 'Ki', 0, 'Kd', 0, 'noise', false, 'theta0', th0_ol), 1.5*t_stop_lin);
 i_stop = find(abs(ol.theta) >= deg2rad(lim_deg) - 1e-9, 1);
 t_stop_nl = ol.t(i_stop);
 
@@ -94,7 +116,7 @@ S{end+1} = '--- 1. No control (open loop) ---';
 S{end+1} = sprintf('Unstable pole: +%.1f 1/s  ->  time constant %.1f ms, angle doubles every %.1f ms', lam, 1000*tau_u, 1000*t_double);
 S{end+1} = sprintf('From a 1 deg tip it hits the %g deg stop in %.0f ms (linear model: %.0f ms).', lim_deg, 1000*t_stop_nl, 1000*t_stop_lin);
 S{end+1} = sprintf('Human reaction time is ~200 ms = %.1f time constants -> why hand control (MANUAL mode) is so hard.', 0.2/tau_u);
-S{end+1} = sprintf('Fan authority: fan torque beats gravity up to %.1f deg (stops at %g deg).', asind(min(1, b*Umax/a)), lim_deg);
+S{end+1} = sprintf('Fan authority: fan torque beats gravity up to %.1f deg (stops at %g deg).', asind(min(1, b*sin(Umax)/a)), lim_deg);
 S{end+1} = sprintf('Minimum Kp for stability: Kp > a/b = %.3f (current Kp = %.3f, %.1fx the minimum).', a/b, p.Kp, p.Kp/(a/b));
 
 % =====================================================================
@@ -173,12 +195,13 @@ end
 % =====================================================================
 
 th0 = p.theta0;
-rec  = tvc_sim(quiet, 3);
-recN = tvc_sim(struct(), 3);
+T_rec = 8;   % long enough for the slow integral tail to finish (2% settling)
+rec  = tvc_sim(quiet, T_rec);
+recN = tvc_sim(struct(), T_rec);
 mr = ic_metrics(rec.t, rec.theta, th0);
 mN = ic_metrics(recN.t, recN.theta, th0);
 last = recN.t >= recN.t(end) - 1;
-jitter_deg = std(recN.u(last)) * p.VIS_SCALE;
+jitter_deg = rad2deg(std(recN.u(last)));
 rms_deg = rad2deg(rms(recN.theta(last)));
 
 f4 = figure('Visible', vis, 'Position', [50 50 900 650]);
@@ -202,12 +225,12 @@ text(ax1, 0.35, 0.95, sprintf(['Overshoot: %.1f deg (%.0f%%) at %.0f ms\n' ...
      mr.overshoot_deg, mr.overshoot_pct, 1000*mr.t_peak, 1000*mr.t_recover, ...
      1000*mr.t_settle2, 1000*mr.t_band2deg, fmt_ms(mr.tau_env)), ...
      'Units', 'normalized', 'VerticalAlignment', 'top', 'BackgroundColor', 'w', 'EdgeColor', [0.8 0.8 0.8]);
-xlim([0 1.5]);
+xlim([0 min(T_rec, max(2, 1.1*mr.t_settle2))]);
 ax2 = nexttile(tl); hold on; grid on;
-plot(recN.t, recN.u*p.VIS_SCALE, 'Color', [0.7 0.7 0.7]);
-plot(rec.t, rec.u*p.VIS_SCALE, 'b', 'LineWidth', 1.5);
+plot(recN.t, rad2deg(-recN.u), 'Color', [0.7 0.7 0.7]);   % drawn fan angle = -u
+plot(rec.t, rad2deg(-rec.u), 'b', 'LineWidth', 1.5);
 yline([-1 1]*p.fan_tilt_max_deg, 'r:', 'fan limit');
-ylabel('fan tilt command [deg]'); xlabel('time [s]'); xlim([0 1.5]);
+ylabel('fan tilt [deg]'); xlabel('time [s]');
 title(sprintf('Actuator: saturated %.0f%% of the time; with noise, steady jitter %.1f deg (std)', ...
               100*mean(abs(rec.u) >= 0.999*Umax), jitter_deg));
 linkaxes([ax1 ax2], 'x');
@@ -229,7 +252,7 @@ S{end+1} = sprintf('With IMU noise:       settles (+/-2 deg) in %.0f ms; then %.
 
 ref_deg = 5;
 T_step = 10;   % long run: the slow integral pole takes seconds to finish the job
-st = tvc_sim(struct('sigma_noise', 0, 'theta0', 0, 'ref', deg2rad(ref_deg)), T_step);
+st = tvc_sim(struct('noise', false, 'theta0', 0, 'ref', deg2rad(ref_deg)), T_step);
 si_nl  = stepinfo(rad2deg(st.theta), st.t, ref_deg, 'SettlingTimeThreshold', 0.02);
 [y_lin, t_lin] = step(T * ref_deg, T_step);
 si_lin = stepinfo(T * ref_deg, 'SettlingTimeThreshold', 0.02);
@@ -263,11 +286,11 @@ S{end+1} = sprintf(['Why the big overshoot: gravity helps the rocket lean furthe
 % 6. DISTURBANCE REJECTION: a steady push (e.g. someone leaning on it)
 % =====================================================================
 
-D = 0.2 * b * Umax;     % disturbance = 20% of the fan's full control authority
+D = 0.2 * b * sin(Umax);   % disturbance = 20% of the fan's full control authority
 t_on = 0.5;
 dist = @(t) D * (t >= t_on);
-dPID = tvc_sim(struct('sigma_noise', 0, 'theta0', 0, 'dist_accel', dist), 4);
-dPD  = tvc_sim(struct('sigma_noise', 0, 'theta0', 0, 'dist_accel', dist, 'Ki', 0), 4);
+dPID = tvc_sim(struct('noise', false, 'theta0', 0, 'dist_accel', dist), 8);
+dPD  = tvc_sim(struct('noise', false, 'theta0', 0, 'dist_accel', dist, 'Ki', 0), 8);
 ss_PD_pred = rad2deg(D / (b*p.Kp - a));       % PD steady offset: b*Kp*th = a*th + D
 peak_dev = max(abs(rad2deg(dPID.theta)));
 i_back = find(abs(rad2deg(dPID.theta)) > 0.1*peak_dev, 1, 'last');
@@ -296,11 +319,11 @@ S{end+1} = sprintf('Final error with PID: %.3f deg;  with PD only: %.2f deg.', r
 tips = [1 2 4 6 8 10 12 15 18 21 24 27 29.5];
 sw = struct('os', [], 'ts', [], 'sat', [], 'peakfan', []);
 for k = 1:numel(tips)
-    r = tvc_sim(struct('sigma_noise', 0, 'theta0', deg2rad(tips(k))), 3);
+    r = tvc_sim(struct('noise', false, 'theta0', deg2rad(tips(k))), 8);
     m = ic_metrics(r.t, r.theta, deg2rad(tips(k)));
     sw.os(k) = m.overshoot_pct;  sw.ts(k) = m.t_band2deg;  sw.ts2(k) = m.t_settle2;
     sw.sat(k) = 100*mean(abs(r.u) >= 0.999*Umax);
-    sw.peakfan(k) = max(abs(r.u))*p.VIS_SCALE;
+    sw.peakfan(k) = rad2deg(max(abs(r.u)));
     sw.stop(k) = r.hit_stop;
 end
 
@@ -344,10 +367,10 @@ xlim([-60 30]); ylim([-80 80]);
 xlabel('real [1/s]'); ylabel('imag [rad/s]');
 title('Root locus: all gains scaled by 0.1x-10x (blue = current)');
 nexttile(tl);
-Kd_list = linspace(0.008, 0.05, 15);
+Kd_list = linspace(0.02, 0.24, 15);
 os = nan(size(Kd_list)); ts = os;
 for k = 1:numel(Kd_list)
-    r = tvc_sim(struct('sigma_noise', 0, 'Kd', Kd_list(k)), 3);
+    r = tvc_sim(struct('noise', false, 'Kd', Kd_list(k)), 3);
     m = ic_metrics(r.t, r.theta, th0);
     if ~r.hit_stop, os(k) = m.overshoot_pct; ts(k) = 1000*m.t_band2deg; end
 end

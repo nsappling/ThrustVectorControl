@@ -1,6 +1,8 @@
 # TVC controller: hardware setup and bench test
 
-`tvc_controller.ino` is the Arduino version (SparkFun RedBoard, Uno-compatible) of the AUTO-mode controller in `sim/pid_animation/rocketgimball.m` / `tvc_sim.m`: the same low-pass filter, PID, ±35° saturation, and fan-tilt sign convention.
+> ⚠️ **Out of date: this sketch no longer matches the MATLAB sim.** It mirrors the *old* `sim/pid_animation` (before 2026-10-12). The sim has since switched to cylinder inertia (new gains: Kp 0.60, Ki 0.18, Kd 0.105), measures fan tilt in radians instead of `VIS_SCALE`, and uses the gyro rate for the D term. The gains are **not** interchangeable. Don't use this sketch as a reference for the current control law, or to fly the real rocket with the EDF running. It's still fine for an Uno/RedBoard + PWM servo bench test. See the warning at the top of `tvc_controller.ino`.
+
+`tvc_controller.ino` is the Arduino version (SparkFun RedBoard, Uno-compatible) of the AUTO-mode controller from an **older** version of `sim/pid_animation/rocketgimball.m` / `tvc_sim.m`: low-pass filter, PID, ±35° saturation, and fan-tilt sign convention.
 
 ## System layout
 

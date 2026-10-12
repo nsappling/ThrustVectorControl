@@ -1,4 +1,7 @@
 %% rocketgimball.m
+% NOTE: firmware/tvc_controller/tvc_controller.ino does NOT match this
+% file anymore (old gains, old VIS_SCALE units, D from a differentiated
+% angle). Don't copy gains between them; see the warning at its top.
 clear; clc; close all;
 
 % PHYSICAL / CONTROL PARAMETERS
@@ -12,56 +15,117 @@ m = 1; %[kg] guess for weight of total rocket
 r_0 = 0.03; %[m] guess for distance from pivot to CG
 g = 9.81; %[m/s^2] gravity
 
+% --- Moment of inertia: rocket modeled as a UNIFORM SOLID CYLINDER ---
+% Body dimensions from cad/rocket_assembly/CAD_Equations.txt (Body_Height
+% = 12 in, Body_OD = 3.5 in). The pivot sits r_0 below the cylinder's
+% center (= its CG, since it's uniform), so by the parallel-axis theorem:
+%   I = m*(3*r_body^2 + L_body^2)/12   (cylinder about its own center,
+%                                        transverse axis)
+%     + m*r_0^2                         (shift to the pivot)
+% Previously the model assumed ALL the mass sat at the CG (I = m*r_0^2),
+% which made I ~10x too small and the rocket tip over ~3x too fast.
+L_body = 12 * 0.0254;         %[m] body length (CAD Body_Height)
+r_body = 3.5/2 * 0.0254;      %[m] body radius (CAD Body_OD / 2)
+I = m*(3*r_body^2 + L_body^2)/12 + m*r_0^2;   %[kg m^2] about the pivot
 
-
-a = g / r_0;
-% "Gravity" term for the inverted-pendulum instability (g / r_0, where r_0
-% is roughly the distance from the pivot to the effective center of
-% mass above it). Bigger = tips over faster with no control.
+a = m * g * r_0 / I;
+% "Gravity" term for the inverted-pendulum instability: gravity torque
+% (m*g*r_0*sin(theta)) divided by inertia. Bigger = tips over faster with
+% no control; sqrt(a) is the unstable pole, 1/sqrt(a) its time constant.
 %Value from coefficient of sintheta for equation of motion
 
-b = F_t * R/(m*r_0^2);
-% Converts PID output "u" into angular acceleration (rad/s^2 per unit
-% u). Must be POSITIVE so the controller pushes back toward upright
-% (negative feedback) -- a negative value here makes the loop unstable
-% almost instantly.
-%value derived from guesses of input values. the b coefficient: b = F_t·R / (m·r₀²) = (6.87 × 0.15) / (1 × 0.03²) ≈ 1144
+b = F_t * R / I;
+% Fan "control effectiveness": the angular acceleration the fan can
+% produce, per unit of sin(fan tilt). The fan pushes with thrust F_t; tilting
+% it by an angle delta gives a SIDEWAYS force F_t*sin(delta) at distance R
+% below the pivot, i.e. a torque F_t*R*sin(delta). Divide by I to get
+% angular acceleration: b*sin(delta). Must be POSITIVE (with the sign
+% convention below) so the controller pushes back toward upright.
+% With the guesses above: I ~= 0.0091 kg m^2, a ~= 32 1/s^2, b ~= 113.
+%
+% EQUATION OF MOTION (what the physics loop integrates):
+%   theta_ddot = b*sin(u) + a*sin(theta)
+%                ^ fan      ^ gravity (tips it over -- the instability)
+% where u = fan tilt angle in RADIANS (the controller's output).
 
-Kp = 0.42; Ki = 0.1; Kd = 0.015;
-% PID gains: proportional / integral / derivative.
+% =====================================================================
+% CONTROLLER GAINS -- how they were chosen (pole placement)
+% ---------------------------------------------------------------------
+% For small angles, sin(x) ~= x, so the plant is approximately
+%   theta_ddot = a*theta + b*u                                    (1)
+% A PD controller commands  u = -Kp*theta - Kd*theta_dot           (2)
+% (fan tilt proportional to how far it leans, plus how fast). Put (2)
+% into (1):
+%   theta_ddot + (b*Kd)*theta_dot + (b*Kp - a)*theta = 0
+% That's a mass-spring-damper. Compare it with the standard form
+%   theta_ddot + 2*zeta*wn*theta_dot + wn^2*theta = 0
+% and match terms:
+%   b*Kp - a = wn^2   ->   Kp = (wn^2 + a)/b    "spring": must beat gravity
+%   b*Kd = 2*zeta*wn  ->   Kd = 2*zeta*wn/b     "damper": stops oscillation
+% We picked wn = 6 rad/s (about 1x the unstable pole sqrt(a) = 5.7 --
+% fast enough to catch it, slow enough to leave room for servo delay)
+% and zeta = 1 (critically damped: fastest return with no oscillation).
+%   Kp = (36 + 32.2)/112.8 = 0.60,   Kd = 2*1*6/112.8 = 0.105
+% Note Kp > a/b = 0.29 is REQUIRED: below that the "spring" is weaker
+% than gravity and it falls over no matter what Kd is.
+% Ki (integral) slowly removes any steady lean caused by a constant push
+% or an off-center CG. It's kept small (integral zero at ~0.05*wn) so it
+% barely disturbs the fast PD behavior.
+% Units: Kp in (rad of fan tilt) per (rad of lean) -- Kp = 0.6 means 1
+% deg of lean -> 0.6 deg of fan tilt. Kd in rad per (rad/s). Ki in rad
+% per (rad*s).
+% Linear-model check (analyze_behavior.m): ~50 deg phase margin and
+% ~85 ms delay margin -- room for a slower real servo.
+% =====================================================================
+Kp = 0.60; Ki = 0.18; Kd = 0.105;
 
-sigma_noise = 0.02;   % simulated IMU noise std dev, in radians
-tau_filter  = 0.02;   % low-pass filter time constant, in seconds
-alpha = dt / (tau_filter + dt);         %this computes the filter coefficient (the discrete version of the transfer function 1/(τs+1)).
-% Discrete low-pass filter coefficient. Must be computed AFTER dt has
-% its final value.
+% =====================================================================
+% SENSOR MODEL (simulated MPU-6050 IMU) -- mirrors the real firmware
+% ---------------------------------------------------------------------
+% A real IMU can't measure the angle directly. It has two sensors:
+%  * ACCELEROMETER: measures gravity's direction -> gives an angle, but
+%    it's NOISY (vibration, jolts) every single sample.
+%  * GYRO: measures angular RATE (theta_dot) directly and cleanly, but
+%    if you integrate it to get angle, small errors pile up (drift).
+% So we use each for what it's good at (see the control loop below).
+% Noise values are [EST] from MPU-6050 datasheet noise densities at our
+% 2 kHz sample rate, rounded up; EDF vibration will make the real
+% accelerometer worse -- measure it.
+% =====================================================================
+sigma_acc  = 0.02;    % [rad]   accelerometer-angle noise, std dev per sample (~1.1 deg)
+sigma_gyro = 0.003;   % [rad/s] gyro rate noise, std dev per sample (~0.17 deg/s)
+tau_comp   = 0.5;     % [s] complementary-filter time constant (same as firmware COMP_TAU)
+k_comp = tau_comp / (tau_comp + dt);
+% Complementary-filter weight: each step, trust the gyro-propagated angle
+% by k_comp (~0.999) and the accelerometer by (1 - k_comp) (~0.001).
 
-VIS_SCALE = 200;
-% Cosmetic only: scales PID output "u" into a fan-tilt angle (degrees)
-% purely for drawing. Does not affect the physics.
+tau_filter  = 0.02;   % [s] extra low-pass on the angle used by P and I (same as firmware)
+alpha = dt / (tau_filter + dt);
+% Discrete version of the low-pass filter 1/(tau*s + 1): each step moves
+% the filtered value a fraction alpha of the way toward the new reading.
+% Must be computed AFTER dt has its final value.
 
+% =====================================================================
+% ACTUATOR (gimbal servo)
+% =====================================================================
 fan_tilt_max_deg = 35;
 % Physical limit on how far the fan/servo can gimbal, in degrees. Used
-% both to clamp the autopilot's visual fan tilt AND as the range of the
-% manual-control dial.
-
-% --- Actuator saturation (applies in BOTH modes -- a real servo has ---
-% --- a hard limit no matter who/what is commanding it)              ---
-Umax_actuator = fan_tilt_max_deg / VIS_SCALE;
-% The biggest "u" the real servo/fan can produce, full deflection.
-% Previously only the DRAWING was clamped to +/-35 degrees while the
-% physics used the raw, unclamped PID output -- meaning the simulated
-% actuator had effectively infinite authority. This clamp is applied
-% to accel_cmd in the main loop so the physics can never assume more
-% authority than the drawing shows.
+% as the actuator saturation (both modes) AND as the dial's range.
+Umax_actuator = deg2rad(fan_tilt_max_deg);
+% The controller output u IS the fan tilt angle in radians, so the
+% biggest u the servo can deliver is simply +/-35 deg in radians. (An
+% earlier version used u = fan_tilt/200 and capped u at 0.175 -- that
+% gave the fan only sin(10 deg) worth of torque instead of sin(35 deg),
+% i.e. ~3x too weak.)
 
 sim_speed = 0.25;
 % Playback speed: 1 = real time, 0.25 = 4x slow motion. Changeable live
 % from the dropdown in the window. The animation is paced to the wall
 % clock, so this is a TRUE speed no matter how fast the computer draws.
-% NOTE: this plant tips over on a ~55ms timescale (1/sqrt(a), sqrt(a) ~=
-% 18 rad/s), faster than human reaction time (~200 ms). At 1x, flying it
-% by hand with the dial is close to impossible -- that's the point of
+% NOTE: this plant tips over on a ~175 ms timescale (1/sqrt(a), sqrt(a)
+% ~= 5.7 rad/s) -- about human reaction time (~200 ms), and the hard
+% limit for any delayed PD balancer is sqrt(2)/sqrt(a) ~= 250 ms. At 1x,
+% flying it by hand with the dial is very hard -- that's the point of
 % the demo (TVC needs a computer). Slow motion makes manual mode playable.
 
 dial_step_deg = 2;
@@ -69,12 +133,18 @@ dial_step_deg = 2;
 
 % --- Mechanical stops (pins) ---
 % Real hardware will have a physical limit -- pins or a bumper -- that
-% stop the body from tipping past a set angle. This is not just for
-% looks: given the actuator authority above, the fan can only out-
-% torque gravity up to asin(b*Umax_actuator/a). Past that angle NO
-% controller (PID or human) has enough authority to recover, so the
-% stop angle should sit comfortably inside that limit.
-max_recoverable_deg = asind(b * Umax_actuator / a);
+% stop the body from tipping past a set angle. The fan's best torque is
+% b*sin(35 deg); gravity's is a*sin(theta). Past the angle where gravity
+% wins, asin(b*sin(Umax)/a), NO controller (PID or human) can recover,
+% so the stop angle must sit inside that limit. With the current guesses
+% b*sin(35)/a ~= 2, i.e. the fan beats gravity at ANY angle (reported as
+% 90 deg).
+max_recoverable_deg = asind(min(1, b * sin(Umax_actuator) / a));
+if max_recoverable_deg >= 89.9
+    recover_msg = 'Fan can beat gravity at any angle.';
+else
+    recover_msg = sprintf('Fan can only recover up to %.0f deg.', max_recoverable_deg);
+end
 theta_limit_deg = 30;   % keep this well under max_recoverable_deg
 theta_limit = deg2rad(theta_limit_deg);
 
@@ -84,9 +154,11 @@ theta_limit = deg2rad(theta_limit_deg);
 
 theta      = 0.2;   % true body angle (rad), 0 = upright. Start tipped so you see the recovery.
 theta_dot  = 0.0;    % angular velocity (rad/s)
-theta_filt = 0.0;    % filtered angle estimate (what the controller sees)
-integral_term = 0.0;  % running integral of error
-prev_error = [];    % previous error, [] = "not measured yet" (like Python's None)
+theta_est  = theta;  % complementary-filter angle estimate. Starts at the true
+                     % angle, as if the filter had already settled (the real
+                     % firmware initializes from the accelerometer the same way).
+theta_filt = theta;  % low-passed estimate used by P and I
+integral_term = 0.0; % running integral of the error (rad*s)
 ref = 0.0;           % target angle: upright
 sim_time = 0.0;       % simulated time elapsed (s), used for the periodic kicks
 
@@ -221,6 +293,25 @@ fig.WindowKeyPressFcn = @(src, evt) keyDownCB(src, evt, dial_step_deg, fan_tilt_
 
 % =====================================================================
 % SIMULATION LOOP
+% ---------------------------------------------------------------------
+% Every physics step (dt = 0.5 ms) runs the same chain a real flight
+% computer runs, then advances the physics:
+%
+%   1. SENSE     simulated IMU: noisy accelerometer angle + gyro rate
+%   2. ESTIMATE  complementary filter fuses them into one clean angle
+%   3. SMOOTH    a light low-pass on that angle (for the P and I terms)
+%   4. ERROR     how far we are from where we want to be (ref - angle)
+%   5. PID       P: push back in proportion to the lean
+%                I: push back in proportion to how long it's leaned
+%                D: resist motion, using the gyro's measured rate
+%   6. SATURATE  the servo can't tilt the fan past +/-35 deg
+%   7. ACTUATE   fan tilt -> sideways thrust -> torque about the pivot
+%   8. PHYSICS   add gravity's torque, integrate angle and rate
+%   9. STOPS     mechanical pins stop the body at +/-30 deg
+%
+% In MANUAL mode, steps 4-5 are replaced by the dial, but steps 1-3 keep
+% running so the autopilot has a good angle estimate the moment you
+% hand control back.
 % =====================================================================
 
 kick_interval_s = 2.0;   % AUTO mode: bump the rocket every 2 s of sim time so there's always something to watch
@@ -245,8 +336,8 @@ while isvalid(fig)   % run until the user closes the window
         dial.Enable = 'on'; centerBtn.Enable = 'on';
         modeSwitch.Value = 'MANUAL';   % keep the switch in sync if M was pressed
     elseif ~manualMode && wasManualMode
-        integral_term = 0.0;   % don't let the autopilot inherit a stale integral/derivative history
-        prev_error = [];        % from whatever the rocket was doing under manual control
+        integral_term = 0.0;   % don't let the autopilot inherit a stale integral
+                               % from whatever the rocket was doing under manual control
         dial.Enable = 'off'; centerBtn.Enable = 'off';
         modeSwitch.Value = 'AUTO';
     end
@@ -254,12 +345,17 @@ while isvalid(fig)   % run until the user closes the window
 
     % --- Disturbances: the Kick button (any mode), plus automatic ---
     % --- kicks in AUTO mode only, so they don't fight the user's input ---
+    % A kick is a sudden shove: it changes the rotation SPEED (theta_dot)
+    % instantly, and the angle follows. (Teleporting the angle instead, as
+    % an earlier version did, is physically impossible -- and the gyro,
+    % which senses motion, would never see it, so the estimator would be
+    % fooled.) 1.5-2.5 rad/s swings the body roughly 6-10 deg.
     if getappdata(fig, 'kickRequest')
-        theta = theta + sign(randn) * (0.12 + 0.10*rand);
+        theta_dot = theta_dot + sign(randn) * (1.5 + 1.0*rand);
         setappdata(fig, 'kickRequest', false);
     end
     if ~manualMode && sim_time >= next_kick_time
-        theta = theta + sign(randn) * (0.12 + 0.10*rand);
+        theta_dot = theta_dot + sign(randn) * (1.5 + 1.0*rand);
         next_kick_time = sim_time + kick_interval_s;
     elseif manualMode
         next_kick_time = sim_time + kick_interval_s;
@@ -271,41 +367,65 @@ while isvalid(fig)   % run until the user closes the window
     nsub = min(max_substeps, max(1, round(wall_dt * sim_speed / dt)));
 
     % Manual command from the dial: dial angle = fan tilt in degrees.
-    % Fan tilt is drawn as -u*VIS_SCALE (see the sign note below), so
-    % u = -dial/VIS_SCALE.
-    manual_u = -getappdata(fig, 'dialDeg') / VIS_SCALE;
+    % The fan is drawn at -u (see the sign note below the loop), so the
+    % dial setting maps to u = -dial, in radians.
+    manual_u = -deg2rad(getappdata(fig, 'dialDeg'));
 
     for k = 1:nsub
 
+        % ---- 1. SENSE: what the IMU reports this sample ----
+        % Each reading = truth + random noise (randn = standard normal).
+        acc_angle  = theta     + sigma_acc  * randn;   % accelerometer's angle (noisy)
+        gyro_rate  = theta_dot + sigma_gyro * randn;   % gyro's angular rate (clean)
+
+        % ---- 2. ESTIMATE: complementary filter ----
+        % Predict the new angle by integrating the gyro (angle += rate*dt),
+        % then nudge it a tiny bit (weight 1 - k_comp ~= 0.001) toward the
+        % accelerometer's angle. Fast changes come from the gyro (clean,
+        % no lag); the slow, long-term level comes from the accelerometer
+        % (no drift). Accelerometer noise gets averaged over ~tau_comp =
+        % 0.5 s, so it all but disappears.
+        theta_est = k_comp * (theta_est + gyro_rate * dt) + (1 - k_comp) * acc_angle;
+
+        % ---- 3. SMOOTH: low-pass for the P and I terms ----
+        % theta_filt moves a fraction alpha of the way toward theta_est
+        % each step: a first-order filter with time constant tau_filter.
+        theta_filt = theta_filt + alpha * (theta_est - theta_filt);
+
         if manualMode
-            u = manual_u;
+            u = manual_u;            % you are the controller
         else
-            % --- Simulated IMU measurement ---
-            measured_theta = theta + sigma_noise * randn;
+            % ---- 4. ERROR ----
+            error = ref - theta_filt;   % + when leaning left of target, - when right
 
-            % --- Low-pass filter ---
-            theta_filt = theta_filt + alpha * (measured_theta - theta_filt); %Fake Control loop - This is the recursive difference equation itself, applied every substep. This is the line that's actually doing the filtering.
-
-            % --- PID controller ---
-            error = ref - theta_filt;
-            if isempty(prev_error)
-                prev_error = error;  % avoid a derivative-kick on the very first sample
-            end
+            % ---- 5. PID ----
+            % P term: Kp*error. Leaning 10 deg -> fan tilts 0.6*10 = 6 deg
+            %   back the other way. This is the "spring" that fights gravity.
+            % I term: Ki*integral of error over time. If something keeps it
+            %   leaning (a steady push, an off-center CG), this term keeps
+            %   growing until the lean is gone.
             integral_term = integral_term + error * dt;
-            derivative = (error - prev_error) / dt;
-            prev_error = error;
+            % D term: Kd*(rate of change of error). The target is fixed, so
+            %   d(error)/dt = -theta_dot, and the gyro MEASURES theta_dot
+            %   directly. Using it (instead of differencing the noisy angle,
+            %   which amplifies noise by 1/dt = 2000x) gives clean damping:
+            %   the "shock absorber" that stops it swinging past upright.
+            derivative = -gyro_rate;
 
             u = Kp*error + Ki*integral_term + Kd*derivative;
         end
 
-        % --- Actuator saturation: the real servo can't exceed +/-35 ---
-        % deg no matter which mode commanded it (previously only the
-        % drawing was clamped -- the physics assumed infinite authority).
+        % ---- 6. SATURATE: the servo can't exceed +/-35 deg ----
+        % Applies in BOTH modes: a real servo has a hard limit no matter
+        % who or what is commanding it.
         u = max(-Umax_actuator, min(Umax_actuator, u));
         u_last = u;
-        accel_cmd = b * u;
 
-        % --- Physics: semi-implicit ("symplectic") Euler integration ---
+        % ---- 7. ACTUATE: fan tilt -> torque -> angular acceleration ----
+        % Only the sideways part of the thrust, F_t*sin(u), makes torque.
+        accel_cmd = b * sin(u);
+
+        % ---- 8. PHYSICS: semi-implicit ("symplectic") Euler integration ----
         % (same physics either way -- AUTO and MANUAL only differ in
         % how "u" gets computed above). Uses sin(theta), not theta, for
         % the gravity torque -- theta routinely leaves the small-angle
@@ -315,8 +435,8 @@ while isvalid(fig)   % run until the user closes the window
         theta_dot  = theta_dot + theta_ddot * dt;   % update velocity first...
         theta      = theta + theta_dot * dt;         % ...then use the NEW velocity for angle
 
-        % --- Mechanical stops (pins): body rests against them, doesn't ---
-        % --- bounce -- an inelastic contact, same as a real pin/bumper. ---
+        % ---- 9. STOPS: body rests against the pins, doesn't bounce ----
+        % (an inelastic contact, same as a real pin/bumper)
         if theta > theta_limit
             theta = theta_limit;
             theta_dot = 0;
@@ -336,9 +456,11 @@ while isvalid(fig)   % run until the user closes the window
     % should have the SAME sign. Since fan_tilt_rad is combined with theta
     % through rotate_pt (also clockwise-positive), matching the drawn
     % arrow to the true exhaust direction requires fan_tilt to be the
-    % NEGATIVE of u here (theta_ddot itself is still just b*u, unchanged).
-    fan_tilt_deg = max(-fan_tilt_max_deg, min(fan_tilt_max_deg, -u_last * VIS_SCALE));
-    fan_tilt_rad = deg2rad(fan_tilt_deg);
+    % NEGATIVE of u here (theta_ddot itself is still b*sin(u), unchanged).
+    % u is already in radians and already clamped to +/-35 deg, so this is
+    % the true fan angle, not a scaled-up picture of it.
+    fan_tilt_rad = -u_last;
+    fan_tilt_deg = rad2deg(fan_tilt_rad);
 
     draw_scene(bodyPatch, fanArrow, body_local, pivot_x, pivot_y, Ll, Lf, theta, fan_tilt_rad);
 
@@ -360,9 +482,9 @@ while isvalid(fig)   % run until the user closes the window
     readout.Text = sprintf(['Body angle:  %+6.1f deg\nAngle rate:  %+6.0f deg/s\n' ...
                             'Fan tilt:    %+6.1f deg\nSim time:    %6.1f s  (%gx)\n\n' ...
                             'Tip: turn the dial TOWARD the side the rocket is leaning.\n\n' ...
-                            'Stops at +/-%g deg. Fan can only recover up to %.0f deg.'], ...
+                            'Stops at +/-%g deg. %s'], ...
                            rad2deg(theta), rad2deg(theta_dot), fan_tilt_deg, sim_time, sim_speed, ...
-                           theta_limit_deg, max_recoverable_deg);
+                           theta_limit_deg, recover_msg);
 
     drawnow;
 end

@@ -1,4 +1,28 @@
 // tvc_controller.ino
+//
+// *********************************************************************
+// *  WARNING: OUT OF DATE -- DOES NOT MATCH THE MATLAB SIM ANYMORE     *
+// *********************************************************************
+// This sketch mirrors an OLD version of sim/pid_animation (before
+// 2026-10-12). Since then the sim changed and this file did NOT:
+//   - Plant: the sim now models the body as a uniform cylinder (real
+//     inertia), so the old gains here (Kp 0.42, Ki 0.1, Kd 0.015) are on
+//     the edge of instability in the current sim. Sim gains are now
+//     Kp 0.60, Ki 0.18, Kd 0.105.
+//   - Units: here u -> fan tilt via VIS_SCALE = 200 (u = 0.175 at 35 deg).
+//     In the sim, u IS the fan tilt in radians (u = 0.61 at 35 deg), so
+//     the gains are NOT interchangeable between the two.
+//   - D term: here it differentiates the filtered angle (noisy). The sim
+//     now uses the gyro rate directly for D.
+// DON'T use this file:
+//   - as a reference for the current control law (read
+//     sim/pid_animation/rocketgimball.m, "SIMULATION LOOP", instead), or
+//   - to fly the real rocket with the EDF running -- it hasn't been
+//     updated or tested for that.
+// It's still fine for what it was built for: an Uno/RedBoard + PWM
+// servo bench test where you tilt the IMU by hand.
+// *********************************************************************
+//
 // Arduino (SparkFun RedBoard / Uno-compatible) port of the AUTO-mode controller in rocketgimball.m /
 // tvc_sim.m. Reads body angle from a GY-521 (MPU-6050) IMU, runs the
 // same low-pass filter + PID, and drives the gimbal servo.

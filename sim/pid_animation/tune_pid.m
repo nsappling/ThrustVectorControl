@@ -34,17 +34,18 @@ seeds = 1:3;     % noise seeds averaged over during the sweep
 base = tvc_sim(struct(), T);
 mb = tvc_metrics(base);
 fprintf('=== Baseline gains: Kp=%.3f  Ki=%.3f  Kd=%.4f ===\n', base.p.Kp, base.p.Ki, base.p.Kd);
-fprintf('  a = %.1f 1/s^2,  b = %.1f,  Umax = %.3f (= +/-%g deg fan tilt)\n', ...
-        base.a, base.b, base.Umax, base.p.fan_tilt_max_deg);
+fprintf('  a = %.1f 1/s^2,  b = %.1f,  fan limit = +/-%g deg\n', ...
+        base.a, base.b, base.p.fan_tilt_max_deg);
 fprintf('  Max recoverable angle = %.1f deg (stops at %g deg)\n', ...
-        asind(min(1, base.b*base.Umax/base.a)), base.p.theta_limit_deg);
+        asind(min(1, base.b*sin(base.Umax)/base.a)), base.p.theta_limit_deg);
 print_metrics(mb);
 
 % =====================================================================
 % 2. LINEAR STABILITY CHECK (small-angle: sin(theta) ~ theta)
 % Plant:  theta'' = a*theta + b*u   ->  G(s) = b / (s^2 - a)
 % Sensor: first-order low-pass      ->  F(s) = 1 / (tau*s + 1)
-% PID acts on the filtered signal, so the loop is L = C*F*G.
+% P and I act on the low-passed angle; D acts on the gyro rate (s*theta),
+% so the loop is L = ((Kp + Ki/s)*F + Kd*s)*G.
 % =====================================================================
 
 linear_check(base.p, base.a, base.b);
@@ -53,8 +54,8 @@ linear_check(base.p, base.a, base.b);
 % 3. GAIN SWEEP over Kp x Kd
 % =====================================================================
 
-Kp_list = linspace(0.30, 1.20, 19);
-Kd_list = linspace(0.005, 0.060, 12);
+Kp_list = linspace(0.35, 1.60, 21);    % Kp must exceed a/b (~0.29)
+Kd_list = linspace(0.02, 0.24, 12);
 cost = inf(numel(Kd_list), numel(Kp_list));
 settle = inf(size(cost));
 
@@ -107,9 +108,9 @@ end
 yline([-2 2], ':k', 'HandleVisibility', 'off');
 ylabel('\theta [deg]'); title('Body angle'); legend('Location', 'best');
 subplot(2,1,2); hold on; grid on;
-plot(base.t, base.u * base.p.VIS_SCALE, 'DisplayName', 'baseline');
+plot(base.t, rad2deg(-base.u), 'DisplayName', 'baseline');   % drawn fan angle = -u
 if exist('best', 'var')
-    plot(best.t, best.u * best.p.VIS_SCALE, 'DisplayName', 'best in sweep');
+    plot(best.t, rad2deg(-best.u), 'DisplayName', 'best in sweep');
 end
 ylabel('fan tilt command [deg]'); xlabel('time [s]'); title('Actuator');
 exportgraphics(f1, fullfile(outdir, 'pid_response.png'));
@@ -148,7 +149,7 @@ function m = tvc_metrics(r)
     m.overshoot_deg = max(0, max(-sign(r.p.theta0) * rad2deg(r.theta)));
     last = r.t >= r.t(end) - 1;               % final 1 s = "steady state"
     m.ss_rms_deg = rad2deg(rms(r.theta(last)));
-    m.fan_jitter_deg = std(r.u(last)) * r.p.VIS_SCALE;
+    m.fan_jitter_deg = rad2deg(std(r.u(last)));
     m.sat_frac = mean(abs(r.u) >= 0.999 * r.Umax);
     m.hit_stop = r.hit_stop;
 end
@@ -167,11 +168,12 @@ function s = fmt_time(t)
 end
 
 function linear_check(p, a, b)
+    % Same linear model as analyze_behavior.m (see the derivation there):
+    % P and I act on the low-passed angle, D on the gyro's measured rate.
     s = tf('s');
     G = b / (s^2 - a);
     F = 1 / (p.tau_filter*s + 1);
-    C = pid(p.Kp, p.Ki, p.Kd);
-    L = C * F * G;
+    L = ((p.Kp + p.Ki/s) * F + p.Kd * s) * G;
     CL = feedback(L, 1);
     poles = pole(CL);
     fprintf('  Linear model: closed loop is %s\n', ...

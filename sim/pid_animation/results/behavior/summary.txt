@@ -1,55 +1,57 @@
-rocketgimball.m behavior summary   (2026-10-12 11:13)
-Gains: Kp = 0.420, Ki = 0.100, Kd = 0.0150;  filter tau = 0.020 s;  IMU noise = 0.020 rad
-Plant: a = g/r_0 = 327.0 1/s^2, b = F_t*R/(m*r_0^2) = 1145.0, fan limit = +/-35 deg (Umax = 0.175)
+rocketgimball.m behavior summary   (2026-10-12 11:32)
+Gains: Kp = 0.600, Ki = 0.180, Kd = 0.1050 (D from gyro);  filter tau = 0.020 s
+IMU noise [EST]: accel angle 0.020 rad, gyro 0.0030 rad/s per sample; complementary filter tau = 0.50 s
+Plant: uniform cylinder 30 cm x 8.9 cm dia, pivot 3.0 cm below its center -> I = 0.0091 kg m^2
+       a = m*g*r_0/I = 32.2 1/s^2, b = F_t*R/I = 112.8, fan limit = +/-35 deg
   (F_t, R, m, r_0 are ESTIMATES -- all numbers below depend on them)
 
 --- 1. No control (open loop) ---
-Unstable pole: +18.1 1/s  ->  time constant 55.3 ms, angle doubles every 38.3 ms
-From a 1 deg tip it hits the 30 deg stop in 226 ms (linear model: 226 ms).
-Human reaction time is ~200 ms = 3.6 time constants -> why hand control (MANUAL mode) is so hard.
-Fan authority: fan torque beats gravity up to 37.8 deg (stops at 30 deg).
-Minimum Kp for stability: Kp > a/b = 0.286 (current Kp = 0.420, 1.5x the minimum).
+Unstable pole: +5.7 1/s  ->  time constant 176.2 ms, angle doubles every 122.1 ms
+From a 1 deg tip it hits the 30 deg stop in 722 ms (linear model: 721 ms).
+Human reaction time is ~200 ms = 1.1 time constants -> why hand control (MANUAL mode) is so hard.
+Fan authority: fan torque beats gravity up to 90.0 deg (stops at 30 deg).
+Minimum Kp for stability: Kp > a/b = 0.286 (current Kp = 0.600, 2.1x the minimum).
 
 --- 2. Closed-loop poles (linear model) ---
 pole [1/s]                   tau [ms]   wn [rad/s]     zeta
--0.8                           1276.6          0.8     1.00
--3.8 +/- 12.7j                  262.0         13.3     0.29
--41.6                            24.0         41.6     1.00
-Slowest pole sets the final tail: tau = 1277 ms (4*tau = 5.11 s to die out).
+-0.7                           1378.2          0.7     1.00
+-4.7 +/- 2.2j                   211.5          5.2     0.91
+-51.7                            19.4         51.7     1.00
+Slowest pole sets the final tail: tau = 1378 ms (4*tau = 5.51 s to die out).
 
 --- 3. Stability margins ---
-Phase margin: 9.9 deg at 13.6 rad/s   (rule of thumb: want 30-60 deg)
-Delay margin: 12.7 ms of extra latency (servo lag, IMU delay, loop time) before it goes unstable
-Gain margin (lower): all gains can shrink to 0.71x (-3.0 dB) before it goes unstable
+Phase margin: 54.9 deg at 9.0 rad/s   (rule of thumb: want 30-60 deg)
+Delay margin: 106.4 ms of extra latency (servo lag, IMU delay, loop time) before it goes unstable
+Gain margin (lower): all gains can shrink to 0.51x (-5.9 dB) before it goes unstable
 Gain margin (upper): none in the linear model -- in practice noise, servo speed and delay set the limit
 
 --- 4. Recovery from a 11.5 deg tip (nonlinear sim, noise-free) ---
-Overshoot:            6.39 deg (56% of the tip) at 203 ms
-Recovery time 90->10%: 70 ms
-Settling time:        1024 ms (within 2% of the tip), 503 ms (within +/-2 deg)
-Decay time constant:  267 ms (fit to the oscillation envelope)
-Steady-state error:   0.003 deg
-With IMU noise:       settles (+/-2 deg) in 513 ms; then 0.42 deg RMS angle, 3.0 deg RMS fan jitter
+Overshoot:            1.77 deg (15% of the tip) at 990 ms
+Recovery time 90->10%: 373 ms
+Settling time:        3938 ms (within 2% of the tip), 411 ms (within +/-2 deg)
+Decay time constant:  n/a (not enough oscillation peaks) (fit to the oscillation envelope)
+Steady-state error:   -0.015 deg
+With IMU noise:       settles (+/-2 deg) in 413 ms; then 0.05 deg RMS angle, 0.0 deg RMS fan jitter
 
 --- 5. Commanded 5 deg lean (setpoint step) ---
                           nonlinear       linear
-Rise time 10-90% [ms]            45           32
-Peak time [ms]                  236          193
-Overshoot [%]                 315.3        335.8
-Settling 2% [ms]               6175         6043
+Rise time 10-90% [ms]           186          187
+Peak time [ms]                  788          799
+Overshoot [%]                  91.7         92.2
+Settling 2% [ms]               6269         6240
 Why the big overshoot: gravity helps the rocket lean further, so the P term alone would park it at
-bKp/(bKp - a) = 3.1x the command (15.6 deg for a 5 deg command). Only the slow integral pole
-(tau = 1.3 s) pulls it back to 5 deg, so settling takes seconds. Fine for balancing at 0 deg; if the
+bKp/(bKp - a) = 1.9x the command (9.5 deg for a 5 deg command). Only the slow integral pole
+(tau = 1.4 s) pulls it back to 5 deg, so settling takes seconds. Fine for balancing at 0 deg; if the
 joystick will command lean angles, add gravity feedforward (u_ff = -(a/b)*sin(ref)) or scale the command.
 
 --- 6. Steady push (20% of fan authority, starts at 0.5 s) ---
-Peak deviation: 19.30 deg. PD alone would sit 14.92 deg off forever; the integral pulls it back (within 10% of peak by 3.2 s).
-Final error with PID: 1.065 deg;  with PD only: 14.59 deg.
+Peak deviation: 18.52 deg. PD alone would sit 20.90 deg off forever; the integral pulls it back (within 10% of peak by 4.5 s).
+Final error with PID: 0.145 deg;  with PD only: 20.81 deg.
 
 --- 7. Effect of tip size (nonlinear) ---
-The fan hits its +/-35 deg limit for tips of 15 deg and up; past that, overshoot and settling grow with tip size.
-Overshoot ranges 45%-56%; settling (2%) 995-1381 ms over 1-29.5 deg tips. Recovered from all: true.
+The fan never saturates over the tested range.
+Overshoot ranges 15%-15%; settling (2%) 3920-3941 ms over 1-29.5 deg tips. Recovered from all: true.
 
 --- 8. Gain sensitivity ---
-Scaling ALL gains together stays stable from 0.72x to 10.00x of the current values (tested 0.1x-10x).
-Overshoot vs Kd: 82% at Kd = 0.011 down to 3% at Kd = 0.038 (current Kd = 0.015).
+Scaling ALL gains together stays stable from 0.51x to 10.00x of the current values (tested 0.1x-10x).
+Overshoot vs Kd: 94% at Kd = 0.020 down to 15% at Kd = 0.114 (current Kd = 0.105).

@@ -12,7 +12,7 @@ Team: Nate Sapp, Warren Schindler, Kailash Gupta-Verma, Alec Garcia.
 - `firmware/tvc_controller/`: older Uno controller for a PWM servo; reference only.
 - `ground/`: Raspberry Pi 5 code. `tvc_logger.py` logs the CSV and sends commands over USB serial.
 - `sim/tvc_sim/`: main MATLAB design sim (`tvc_main`). Every parameter is in `tvc_params.m`, tagged `[EST]` / `[SPEC]` / `[DES]`. `flight_computer` uses the same control law; keep gains and sign conventions in sync.
-- `sim/pid_animation/`: simple animated PID sim (`rocketgimball.m`, a uifigure with an AUTO/MANUAL switch, a fan-tilt dial and a sim-speed dropdown; **never run it with `-batch`**, it loops forever) and related tools. `analyze_behavior.m` is the headless behavior report (figures and `summary.txt` in `results/behavior/`). `tvc_sim.m` defaults must match `rocketgimball.m`. It mirrors `firmware/tvc_controller`.
+- `sim/pid_animation/`: simple animated PID sim (`rocketgimball.m`, a uifigure with an AUTO/MANUAL switch, a fan-tilt dial and a sim-speed dropdown; **never run it with `-batch`**, it loops forever) and related tools. `analyze_behavior.m` is the headless behavior report (figures and `summary.txt` in `results/behavior/`). `tvc_sim.m` defaults must match `rocketgimball.m`. `firmware/tvc_controller` is out of date relative to this sim (old gains, `VIS_SCALE` units, D from differentiated angle) and has a warning banner saying so.
 - `cad/`: SolidWorks (binary, never edit). Each assembly is in the same folder as its parts; move them together.
 
 ## Hardware (preliminary, see docs/)

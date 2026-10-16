@@ -6,6 +6,7 @@ Start with **[system_overview.md](system_overview.md)**: block diagram, power bu
 |---|---|
 | [system_overview.md](system_overview.md) | How it all fits together, and what's still undecided |
 | [components.md](components.md) | Specs and sources for every part (and how confident we are in each number) |
+| [design_justification.md](design_justification.md) | Why each part was chosen: the considerations each one has to satisfy |
 | [pinout.md](pinout.md) | What's on every Teensy pin (single source of truth) |
 | [icd/power.md](icd/power.md) | AC inlet, PSU, fuses, wire gauges, branch wiring |
 | [icd/edf_esc.md](icd/edf_esc.md) | ESC ↔ EDF, throttle signal, throttle cap |

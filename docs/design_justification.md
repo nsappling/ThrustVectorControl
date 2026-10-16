@@ -37,7 +37,7 @@ A short list of the considerations behind each part choice, to show *why* each p
 - **Interface:** 115200-baud serial bus, plenty for a 100–200 Hz command rate plus slower telemetry reads.
 - **Power and weight:** 9–12.6 V, so it runs straight off the 12 V supply. ~3 A stall, under the 5 A fuse. 63 g, a light addition to the gimbal.
 - **Budget:** ~$20, under the $100 ceiling, with room for a spare. That ruled out the KST X20 (~$200) and the Dynamixel XM430 ($240–310).
-- **Alternative considered:** the HTD-85H (8.34 N·m stall), which has more torque margin but is slower (0.2 s/60°), heavier, and has an unknown stall current.
+- **Alternative considered:** the HTD-85H (8.34 N·m stall), which has more torque margin but is slower (0.2 s/60°) and has an unknown stall current.
 
 ### Servo bus adapter: [Hiwonder BusLinker V3.0](https://www.hiwonder.com/products/buslinker)
 - Converts the Teensy's 2-wire UART into the servo's 1-wire half-duplex bus.

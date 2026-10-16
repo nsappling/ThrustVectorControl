@@ -30,19 +30,19 @@ A short list of the considerations behind each part choice, to show *why* each p
 - Safety: it stops the motor on signal loss ✅. Disable the brake. The built-in 5 V BEC isn't needed.
 - Cost: ~$25.
 
-### Gimbal servo: [Hiwonder HTD-85H](https://openelab.io/products/htd-85h-bus-servo) (current pick; it replaced the [HTD-30H](https://www.hiwonder.com/products/htd-30h))
-- **Torque:** sustained load of ~3 N·m (from the gimbal inertia and response-time estimate). The HTD-30H stalls at 2.94 N·m, which is below that, so it was disqualified. The HTD-85H stalls at 8.34 N·m ✅.
-- **Speed:** 0.2 s/60° at 11.1 V, which is exactly at the relaxed ≤ 0.2 s/60° limit. The HTD-30H's 0.12 s/60° was faster. Check that it's still fast enough against the closed-loop bandwidth.
+### Gimbal servo: [Hiwonder HTD-30H](https://www.hiwonder.com/products/htd-30h)
+- **Torque:** 2.94 N·m stall (30 kg·cm at 12.6 V), which met the early 2–3 N·m target from rough gimbal inertia and response-time sizing. That target is a placeholder. The sim (`tvc_servo_sizing.m`) puts the usable torque needed at the gimbal nearer ~0.2 N·m. Confirm the margin with the real EDF/cradle inertia and the CG offset from the gimbal axis.
+- **Speed:** 0.12 s/60°, comfortably inside the ≤ 0.2 s/60° limit, so it adds little lag to the closed loop.
 - **Feedback:** reports position, voltage, and temperature over its bus, so we can log the actual gimbal angle (for anti-windup and system ID). It doesn't report current or load.
-- **Interface:** 115200-baud serial bus, plenty for a 100–200 Hz command rate. It uses the same protocol as the HTD-30H, so the firmware is unchanged.
-- **Power:** 9–14.8 V, so it runs on 12 V directly. Stall current is unknown; check it against the 5 A servo fuse.
-- **Budget:** under the $100 ceiling. That ruled out the KST X20 (~$200) and the Dynamixel XM430 ($240–310).
-- **Open question:** the sim's `tvc_servo_sizing.m` assumes only ~0.2 N·m of usable gimbal torque, versus the 3 N·m target above. Reconcile the two estimates with the real EDF/cradle inertia and CG offset.
+- **Interface:** 115200-baud serial bus, plenty for a 100–200 Hz command rate plus slower telemetry reads.
+- **Power and weight:** 9–12.6 V, so it runs straight off the 12 V supply. ~3 A stall, under the 5 A fuse. 63 g, a light addition to the gimbal.
+- **Budget:** ~$20, under the $100 ceiling, with room for a spare. That ruled out the KST X20 (~$200) and the Dynamixel XM430 ($240–310).
+- **Alternative considered:** the HTD-85H (8.34 N·m stall), which has more torque margin but is slower (0.2 s/60°), heavier, and has an unknown stall current.
 
 ### Servo bus adapter: [Hiwonder BusLinker V3.0](https://www.hiwonder.com/products/buslinker)
 - Converts the Teensy's 2-wire UART into the servo's 1-wire half-duplex bus.
-- Input range 5–14 V covers 12 V ✅. It has the servo's connector (PH2.0 for the HTD-30H, 5264 for the HTD-85H) ✅.
-- Logic level on its serial header is unknown [VERIFY], hence the level shifter. Its current rating through the board is also unpublished [VERIFY with the HTD-85H stall current].
+- Input range 5–14 V covers 12 V ✅. It has the HTD-30H's PH2.0 connector ✅.
+- Logic level on its serial header is unknown [VERIFY], hence the level shifter. Its current rating through the board is also unpublished [VERIFY against the 3 A servo stall current].
 - It also allows PC setup of the servo (ID, offsets, limits) over USB.
 
 ### Level shifter: BSS138 4-channel, 3.3 ↔ 5 V
@@ -77,7 +77,7 @@ A short list of the considerations behind each part choice, to show *why* each p
 ### Fuses: F1 15 A (EDF branch), F2 5 A (servo branch), inline blade
 - Rating has to be above the normal load current and below the wire's ampacity.
 - F1 also acts as a power limit on the EDF (~180 W). The firmware throttle cap keeps normal operation under it.
-- F2 has to be above the servo's stall current (3 A for the HTD-30H). **Check the HTD-85H's stall current.**
+- F2 has to be above the servo's stall current (~3 A for the HTD-30H) ✅.
 - Mounted on the + side, close to the PSU.
 
 ### Wiring and connectors

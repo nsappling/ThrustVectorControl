@@ -6,7 +6,7 @@ Code that runs on the microcontroller. The target is a **Teensy 4.0**; early pro
 |---|---|---|
 | `flight_computer/` | Teensy 4.0 | **Main controller.** IMU → PID → HTD-30H bus servo, EDF throttle, safety states. Start here. |
 | `tests/servo_bus_test/` | Teensy 4.0 | First power-up of the servo through the BusLinker |
-| `tests/esc_test/` | Teensy 4.0 | ESC throttle calibration and EDF current steps |
+| `tests/esc_test/` | Teensy 4.0 / 4.1 | Spin the EDF from the Serial Monitor: ESC arming, throttle calibration, ramped and capped throttle steps |
 | `tests/hardware_test/` | Uno | IMU readout + PWM servo sweep (old hardware) |
 | `tests/RotationMappedToServoTest/` | Uno | IMU angle mapped to a PWM servo (old hardware) |
 | `tvc_controller/` | Uno | Earlier closed-loop controller for a **PWM** servo. Kept for reference; it can't drive the HTD-30H. |

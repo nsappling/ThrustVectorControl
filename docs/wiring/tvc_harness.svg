@@ -852,7 +852,7 @@
 <polygon fill="none" stroke="black" points="4619.5,-550.5 4619.5,-573.5 4913.5,-573.5 4913.5,-550.5 4619.5,-550.5"/>
 <text text-anchor="start" x="4739" y="-558.3" font-family="arial" font-size="14.00">TEENSY</text>
 <polygon fill="none" stroke="black" points="4619.5,-527.5 4619.5,-550.5 4693.5,-550.5 4693.5,-527.5 4619.5,-527.5"/>
-<text text-anchor="start" x="4623.5" y="-535.3" font-family="arial" font-size="14.00">Teensy 4.0</text>
+<text text-anchor="start" x="4623.5" y="-535.3" font-family="arial" font-size="14.00">Teensy 4.1</text>
 <polygon fill="none" stroke="black" points="4693.5,-527.5 4693.5,-550.5 4867.5,-550.5 4867.5,-527.5 4693.5,-527.5"/>
 <text text-anchor="start" x="4697.5" y="-535.3" font-family="arial" font-size="14.00">3.3V logic, NOT 5V tolerant</text>
 <polygon fill="none" stroke="black" points="4867.5,-527.5 4867.5,-550.5 4913.5,-550.5 4913.5,-527.5 4867.5,-527.5"/>

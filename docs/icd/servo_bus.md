@@ -20,7 +20,7 @@
 **BusLinker jumpers:** **Servo + TTL** when the Teensy is in control. Use **Servo + USB** only when setting up the servo from the Hiwonder PC software (for example, changing the ID or offset).
 
 ### Why the level shifter
-The protocol doc's reference circuit pulls the bus up to **5 V**, and the Teensy 4.0 is **not 5 V tolerant**. Until we know the BusLinker header's logic level, assume 5 V and use the shifter. If you power the BusLinker and measure its idle TX pin at ≤ 3.3 V, the shifter can be dropped. Record that result here.
+The protocol doc's reference circuit pulls the bus up to **5 V**, and the Teensy 4.1 is **not 5 V tolerant**. Until we know the BusLinker header's logic level, assume 5 V and use the shifter. If you power the BusLinker and measure its idle TX pin at ≤ 3.3 V, the shifter can be dropped. Record that result here.
 
 ## Protocol (per [Hiwonder protocol doc](../datasheets/Hiwonder_bus_servo_protocol.pdf))
 

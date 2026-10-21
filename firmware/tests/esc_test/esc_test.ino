@@ -1,8 +1,8 @@
 // esc_test.ino -- spin the EDF through the Skywalker 50A V2 ESC from the
 // Serial Monitor: arming, throttle-range calibration, and capped throttle steps.
 //
-// Board: Teensy 4.1 or Teensy 4.0 (Tools > Board). The sketch is the same for
-// both: pin 2 is a PWM-capable pin on either board.
+// Board: Teensy 4.1 (Tools > Board). It also runs unchanged on a Teensy 4.0:
+// pin 2 is a PWM-capable pin on both boards.
 //
 // Wiring (docs/icd/edf_esc.md):
 //   ESC signal (white/yellow) -> Teensy pin 2

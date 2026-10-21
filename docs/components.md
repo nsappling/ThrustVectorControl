@@ -79,8 +79,8 @@ Some Hiwonder docs show 1 Mbaud and 4096-count positions. Those are for their ne
 | Pins | VCC, GND, SCL, SDA, XDA, XCL, AD0, INT |
 | Ranges | Gyro ±250/500/1000/2000 °/s. Accel ±2/4/8/16 g. We use ±500 °/s and ±4 g. |
 
-## Flight computer: PJRC Teensy 4.0
-[Pinout and docs](https://www.pjrc.com/store/teensy40.html)
+## Flight computer: PJRC Teensy 4.1
+[Pinout and docs](https://www.pjrc.com/store/teensy41.html)
 
 | Spec | Value |
 |---|---|
@@ -88,6 +88,8 @@ Some Hiwonder docs show 1 Mbaud and 4096-count positions. Those are for their ne
 | Logic | **3.3 V. Pins are NOT 5 V tolerant.** |
 | Power | VIN 3.6–5.5 V. VIN and VUSB are joined by a cuttable pad. The 3.3 V pin supplies ~250 mA. |
 | USB | Micro-USB, native 480 Mbit/s serial (the baud setting is ignored) |
+| Memory | 8 MB flash, 1 MB RAM, microSD slot (could log onboard if ever needed) |
+| Size | 61 × 18 mm. Pins 0–23 sit where they do on a Teensy 4.0, so the pin table carries over. |
 | Used peripherals | Serial1 (pins 0/1), Wire (pins 18/19), PWM (pin 2) |
 
 ## Ground computer: Raspberry Pi 5

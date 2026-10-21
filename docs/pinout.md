@@ -1,4 +1,4 @@
-# Teensy 4.0 Pin Assignments
+# Teensy 4.1 Pin Assignments
 
 This is the single source of truth. `firmware/flight_computer/config.h` must match this table. If you change a pin, change both files in the same commit.
 

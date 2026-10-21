@@ -42,7 +42,7 @@ connectors:
     type: BSS138 level shifter (4ch)
     pinlabels: [LV, LV1, LV2, GND, HV, HV1, HV2]
   TEENSY:
-    type: Teensy 4.0
+    type: Teensy 4.1
     subtype: 3.3V logic, NOT 5V tolerant
     pinlabels: ['0 RX1', '1 TX1', '2 ESC', '3 INT', '18 SDA', '19 SCL', 3V3, VIN 5V, GND, USB]
   IMU:

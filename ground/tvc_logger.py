@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """tvc_logger.py -- run on the Raspberry Pi (or any laptop) with the flight
-computer (Teensy 4.0, or the older Uno/RedBoard) plugged in over USB.
+computer (Teensy 4.1, or the older Uno/RedBoard) plugged in over USB.
 
 Saves the board's CSV stream to a timestamped file (open it in MATLAB with
 readtable) and lets you type commands (help, arm, stop, kp 5, ...) that get

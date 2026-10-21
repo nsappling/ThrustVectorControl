@@ -1,5 +1,5 @@
 // servo_bus_test.ino -- first power-up check of the HTD-30H through the BusLinker.
-// Board: Teensy 4.0. Wiring: docs/icd/servo_bus.md (Serial1 pins 0/1 via
+// Board: Teensy 4.1. Wiring: docs/icd/servo_bus.md (Serial1 pins 0/1 via
 // the level shifter). BusLinker jumpers on "Servo + TTL". Only ONE servo
 // on the bus (the ID read uses broadcast).
 //

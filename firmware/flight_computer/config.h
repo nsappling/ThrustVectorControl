@@ -8,7 +8,7 @@
 #include <Arduino.h>
 
 // =====================================================================
-// PINS (Teensy 4.0 -- 3.3 V logic, NOT 5 V tolerant)
+// PINS (Teensy 4.1 -- 3.3 V logic, NOT 5 V tolerant)
 // =====================================================================
 constexpr int PIN_ESC     = 2;    // PWM throttle to the ESC signal wire
 constexpr int PIN_IMU_INT = 3;    // GY-521 INT (reserved, unused for now)

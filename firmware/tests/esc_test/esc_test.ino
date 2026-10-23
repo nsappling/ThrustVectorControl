@@ -25,14 +25,16 @@
 //   before anything else, and why the sketch refuses throttle for ARM_HOLD_MS.
 //
 // Serial Monitor: 115200 baud, line ending "Newline".
-//   t <0-1>   set target throttle (hard-capped at TEST_CAP, ramped at RAMP_PER_S)
-//   s         stop NOW (no ramp). Any unrecognized line also stops.
+//   t <0-1>   set target throttle (hard-capped at TEST_CAP). Ramps up at
+//             RAMP_PER_S and DOWN at RAMP_DOWN_PER_S.
+//   s         stop, ramping down. Any unrecognized line also stops this way.
+//   x         EMERGENCY stop: throttle to zero instantly (no ramp)
 //   ?         print status
 //   cal       throttle-range calibration (only while stopped; follow prompts)
 //
 // Automatic stops:
-//   - Serial Monitor closed / USB unplugged
-//   - MAX_RUN_MS with no new "t" command (re-send "t" to keep it running)
+//   - Serial Monitor closed / USB unplugged      (instant)
+//   - MAX_RUN_MS with no new "t" command         (ramped; re-send "t" to keep it running)
 //   - signal loss: the ESC itself stops the motor if the pulses stop
 //
 // Self-contained on purpose (no shared files).
@@ -51,6 +53,17 @@ const float TEST_CAP    = 0.30;   // [DES] never exceed while the fuse is 15 A.
                                   // watt meter; log each step in the ICD.
 const float RAMP_PER_S  = 0.20;   // [DES] max throttle change per second going UP.
                                   // Avoids current spikes that pop the fuse.
+const float RAMP_DOWN_PER_S = 0.15; // [DES] max throttle change per second going DOWN.
+                                  // WHY: cutting throttle fast makes the spinning fan
+                                  // act as a generator and push energy BACK into the
+                                  // 12 V line. A battery would soak it up; the Mean
+                                  // Well can't, so the voltage jumps and its
+                                  // overvoltage protection (13.8-16.2 V) latches it
+                                  // OFF until the AC is unplugged for a few minutes.
+                                  // Ramping down slower than the fan coasts down on
+                                  // its own lets air drag eat that energy instead.
+                                  // 0.15/s = 2 s from the 0.30 cap. [VERIFY: if the
+                                  // PSU still trips on stops, make this smaller.]
 const uint32_t ARM_HOLD_MS = 3000;  // hold "stop" this long after boot so the ESC
                                     // arms (listen for the arming beeps) [VERIFY]
 const uint32_t MAX_RUN_MS  = 30000; // auto-stop if no "t" command for this long
@@ -82,7 +95,13 @@ int throttle_to_us(float t) {
   return MIN_US + (int)(t * (MAX_US - MIN_US) + 0.5f);
 }
 
-// Instant stop: no ramp, clears everything.
+// Normal stop: ramp down to zero (see RAMP_DOWN_PER_S for why).
+void stop_soft(const char *why) {
+  target = 0;
+  Serial.print("# stopping, ramping down ("); Serial.print(why); Serial.println(")");
+}
+
+// Instant stop: no ramp, clears everything. For emergencies only.
 void stop_now(const char *why) {
   target = 0;
   current = 0;
@@ -154,12 +173,15 @@ void handle_command(char *cmd) {
     print_status();
   } else if (strcmp(cmd, "?") == 0) {
     print_status();
+  } else if (strcmp(cmd, "x") == 0) {
+    stop_now("emergency command");
   } else if (strcmp(cmd, "cal") == 0) {
+    if (current > 0) { stop_soft("stop before calibrating; type cal again when stopped"); return; }
     stop_now("entering calibration");
     cal = CAL_WAIT_UNPLUGGED;
     Serial.println("# CALIBRATION: unplug the ESC's XT60 now, then type 'go'.");
   } else {
-    stop_now(strcmp(cmd, "s") == 0 ? "command" : "unrecognized command");
+    stop_soft(strcmp(cmd, "s") == 0 ? "command" : "unrecognized command");
   }
 }
 
@@ -185,19 +207,19 @@ void loop() {
   uint32_t now = millis();
 
   // Safety: Serial Monitor closed or USB unplugged -> stop.
-  if (!Serial && (target > 0 || cal != CAL_OFF)) stop_now("USB serial lost");
+  if (!Serial && (target > 0 || current > 0 || cal != CAL_OFF)) stop_now("USB serial lost");
 
   // Safety: no fresh "t" command for MAX_RUN_MS -> stop.
-  if (target > 0 && now - last_cmd_ms > MAX_RUN_MS) stop_now("run time limit");
+  if (target > 0 && now - last_cmd_ms > MAX_RUN_MS) stop_soft("run time limit");
 
   // During calibration the pulse is set directly; skip the ramp.
   if (cal != CAL_OFF) return;
 
-  // Ramp: rise at RAMP_PER_S, drop immediately.
+  // Ramp: rise at RAMP_PER_S, fall at RAMP_DOWN_PER_S.
   float dt = (now - last_ramp_ms) * 1e-3f;
   last_ramp_ms = now;
   if (target > current) current = min(target, current + RAMP_PER_S * dt);
-  else                  current = target;
+  else                  current = max(target, current - RAMP_DOWN_PER_S * dt);
   int us = throttle_to_us(current);
   if (us != pulse_us) write_us(us);
 

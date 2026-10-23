@@ -31,6 +31,14 @@ The EDF can pull ~50 A at full throttle; F1 is 15 A. The firmware clamps throttl
 |---|---|---|---|---|
 | | | | | |
 
+## Never cut the throttle instantly (PSU overvoltage)
+When the throttle drops faster than the fan coasts down on its own, the spinning fan acts as a generator and pushes energy back into the 12 V line. A battery would absorb it; the Mean Well LRS-600 can't. The bus voltage jumps, and above its overvoltage trip (13.8–16.2 V) the PSU **latches off** until the AC is unplugged for a few minutes. This is the most likely cause of the PSU shutting off "randomly" during the first ESC tests [VERIFY: not yet measured].
+
+- **Ramp down.** `esc_test` ramps down at 0.15 throttle/s (`RAMP_DOWN_PER_S`), and `EDC10PercThrottleBringupTest` over 1.5 s. Only the emergency stops (`x`, USB lost) cut instantly.
+- **Brake off** in the ESC settings (see Open items). A brake turns deceleration straight into regenerated current.
+- **Optional:** a 1000 µF / 25 V (or higher) electrolytic across the ESC input, near the ESC, absorbs short spikes.
+- If the PSU trips: unplug the AC, wait ~5 min, disconnect both output branches, power up, check ~12 V, then reconnect one branch at a time.
+
 ## Bring-up procedure (fan restrained, guard on, nobody in line with the fan)
 1. **Throttle calibration:** follow the Skywalker manual (power up at max signal, wait for beeps, drop to min). Run `firmware/tests/esc_test` to generate the signals.
 2. Check spin direction at the lowest throttle that turns the fan.

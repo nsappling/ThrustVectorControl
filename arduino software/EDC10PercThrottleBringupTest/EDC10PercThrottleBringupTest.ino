@@ -43,6 +43,12 @@
  * - 1000 us = minimum throttle command.
  * - 1100 us = 10% of nominal throttle signal range.
  * - STOP commands minimum throttle, not power isolation.
+ *
+ * Ramps (added): the throttle ramps up over RAMP_UP_MS and back down over
+ * RAMP_DOWN_MS instead of jumping. Cutting throttle instantly makes the
+ * spinning fan push energy back into the 12 V line; the Mean Well can't
+ * absorb it, the voltage jumps, and its overvoltage protection shuts it
+ * off until the AC is unplugged for a few minutes.
  */
 
 Servo esc;
@@ -53,11 +59,29 @@ const int STOP_US = 1000;
 const int TEST_US = 1100;  // 10% command
 const unsigned long ARM_TIME = 5000;
 const unsigned long RUN_TIME = 1000;
+const unsigned long RAMP_UP_MS = 500;
+const unsigned long RAMP_DOWN_MS = 1500;
+
+int current_us = STOP_US;   // pulse being sent right now
+
+// Move the throttle from current_us to target_us in a straight line over ms.
+void rampTo(int target_us, unsigned long ms) {
+  int start_us = current_us;
+  unsigned long t0 = millis();
+  while (millis() - t0 < ms) {
+    float f = (float)(millis() - t0) / ms;
+    current_us = start_us + (int)((target_us - start_us) * f);
+    esc.writeMicroseconds(current_us);
+    delay(10);
+  }
+  current_us = target_us;
+  esc.writeMicroseconds(current_us);
+}
 
 bool armed = false;
 
 void stopEDF() {
-  esc.writeMicroseconds(STOP_US);
+  rampTo(STOP_US, RAMP_DOWN_MS);
 }
 
 void setup() {
@@ -65,7 +89,7 @@ void setup() {
   Serial.setTimeout(100);
 
   esc.attach(ESC_PIN, 1000, 2000);
-  stopEDF();
+  esc.writeMicroseconds(STOP_US);   // instant: the fan isn't spinning yet
 
   delay(ARM_TIME);
 
@@ -92,7 +116,7 @@ void loop() {
   if (command == "RUN" && armed) {
     Serial.println("Starting 10% test.");
 
-    esc.writeMicroseconds(TEST_US);
+    rampTo(TEST_US, RAMP_UP_MS);
     delay(RUN_TIME);
 
     stopEDF();

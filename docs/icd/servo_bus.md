@@ -1,16 +1,16 @@
 # ICD: Servo Bus (Teensy ↔ BusLinker ↔ HTD-30H)
 
-**Endpoints:** Teensy Serial1 → level shifter → BusLinker TTL header → servo bus → HTD-30H (ID 1)
+**Endpoints:** Teensy Serial2 → level shifter → BusLinker TTL header → servo bus → HTD-30H (ID 1)
 **Status:** Preliminary. The BusLinker header pinout and logic level still need checking.
 
 ## Connections
 
 | # | From | To | Wire | Notes |
 |---|---|---|---|---|
-| S1 | Teensy pin 1 (TX1) | Level shifter LV2 | 26 AWG | |
+| S1 | Teensy pin 8 (TX2) | Level shifter LV2 | 26 AWG | |
 | S2 | Level shifter HV2 | BusLinker **RX** | 26 AWG | |
 | S3 | BusLinker **TX** | Level shifter HV1 | 26 AWG | |
-| S4 | Level shifter LV1 | Teensy pin 0 (RX1) | 26 AWG | |
+| S4 | Level shifter LV1 | Teensy pin 7 (RX2) | 26 AWG | |
 | S5 | Teensy 3.3V | Level shifter LV | 26 AWG | |
 | S6 | Teensy VIN (5 V) | Level shifter HV | 26 AWG | |
 | S7 | Teensy GND | Level shifter GND + BusLinker GND | 26 AWG | |
@@ -20,7 +20,7 @@
 **BusLinker jumpers:** **Servo + TTL** when the Teensy is in control. Use **Servo + USB** only when setting up the servo from the Hiwonder PC software (for example, changing the ID or offset).
 
 ### Why the level shifter
-The protocol doc's reference circuit pulls the bus up to **5 V**, and the Teensy 4.0 is **not 5 V tolerant**. Until we know the BusLinker header's logic level, assume 5 V and use the shifter. If you power the BusLinker and measure its idle TX pin at ≤ 3.3 V, the shifter can be dropped. Record that result here.
+The protocol doc's reference circuit pulls the bus up to **5 V**, and the Teensy 4.1 is **not 5 V tolerant**. Until we know the BusLinker header's logic level, assume 5 V and use the shifter. If you power the BusLinker and measure its idle TX pin at ≤ 3.3 V, the shifter can be dropped. Record that result here.
 
 ## Protocol (per [Hiwonder protocol doc](../datasheets/Hiwonder_bus_servo_protocol.pdf))
 

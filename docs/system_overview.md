@@ -23,7 +23,7 @@ flowchart LR
 
     subgraph ROCKET["Rocket (moving)"]
         IMU["GY-521<br/>MPU-6050"]
-        TEENSY["Teensy 4.0<br/>flight computer"]
+        TEENSY["Teensy 4.1<br/>flight computer"]
     end
 
     IMU <-->|"I2C 400 kHz"| TEENSY
@@ -39,7 +39,7 @@ Whether the Teensy and IMU ride on the rocket or sit on the base depends on the 
 
 | Unit | Job | Runs without the others? |
 |---|---|---|
-| Teensy 4.0 | 400 Hz control loop: read IMU → estimate angle → PID → command servo. Sets EDF throttle. Owns all safety trips. | Yes. It only needs USB power. |
+| Teensy 4.1 | 400 Hz control loop: read IMU → estimate angle → PID → command servo. Sets EDF throttle. Owns all safety trips. | Yes. It only needs USB power. |
 | Raspberry Pi 5 | Logging, tuning, and later the joystick and exhibit UI. Sends setpoints and commands; never sits inside the fast loop. | — |
 | BusLinker | Converts the Teensy's 2-wire UART to the servo's 1-wire half-duplex bus and passes 12 V to the servo. | — |
 | ESC | Turns the 12 V DC supply into 3-phase motor drive for the EDF, set by the throttle pulse width. | — |
@@ -65,7 +65,7 @@ All grounds are tied together: PSU −V, ESC, BusLinker, Teensy, and IMU. The Pi
 
 1. **The servo runs straight off 12 V.** The HTD-30H is rated 9–12.6 V, so no buck converter is needed. Keep the PSU at its factory 12.0 V; don't turn the adjustment pot up past 12.6 V.
 2. **The HTD-30H is a serial bus servo, not a PWM servo.** It takes position commands as packets (0–1000 = 0–240°) and can report its actual position, voltage, and temperature. So we can log the real gimbal angle, not just the commanded one. The old `firmware/tvc_controller` (PWM, Uno) **won't drive it**; use `firmware/flight_computer`.
-3. **The Teensy 4.0 is 3.3 V only, and its pins are not 5 V tolerant.** The servo bus idles at 5 V, so the Teensy ↔ BusLinker UART goes through a level shifter. The IMU is powered from the Teensy's 3.3 V pin so its I2C pull-ups stay at 3.3 V.
+3. **The Teensy 4.1 is 3.3 V only, and its pins are not 5 V tolerant.** The servo bus idles at 5 V, so the Teensy ↔ BusLinker UART goes through a level shifter. The IMU is powered from the Teensy's 3.3 V pin so its I2C pull-ups stay at 3.3 V.
 4. **The Teensy is powered from Pi USB.** The ESC's built-in 5 V BEC is **not used**. Its red wire is left disconnected, because the Teensy's VIN and USB 5 V are joined.
 5. **The EDF is throttle-capped in firmware** (`THROTTLE_MAX` in `config.h`) to stay under the 15 A fuse. Raise the cap only while watching an inline watt meter.
 

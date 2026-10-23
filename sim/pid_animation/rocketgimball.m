@@ -1,7 +1,6 @@
 %% rocketgimball.m
 % NOTE: firmware/tvc_controller/tvc_controller.ino does NOT match this
-% file anymore (old gains, old VIS_SCALE units, D from a differentiated
-% angle). Don't copy gains between them; see the warning at its top.
+
 clear; clc; close all;
 
 % PHYSICAL / CONTROL PARAMETERS
@@ -16,16 +15,9 @@ r_0 = 0.03; %[m] guess for distance from pivot to CG
 g = 9.81; %[m/s^2] gravity
 
 % --- Moment of inertia: rocket modeled as a UNIFORM SOLID CYLINDER ---
-% Body dimensions from cad/rocket_assembly/CAD_Equations.txt (Body_Height
-% = 12 in, Body_OD = 3.5 in). The pivot sits r_0 below the cylinder's
-% center (= its CG, since it's uniform), so by the parallel-axis theorem:
-%   I = m*(3*r_body^2 + L_body^2)/12   (cylinder about its own center,
-%                                        transverse axis)
-%     + m*r_0^2                         (shift to the pivot)
-% Previously the model assumed ALL the mass sat at the CG (I = m*r_0^2),
-% which made I ~10x too small and the rocket tip over ~3x too fast.
-L_body = 12 * 0.0254;         %[m] body length (CAD Body_Height)
-r_body = 3.5/2 * 0.0254;      %[m] body radius (CAD Body_OD / 2)
+
+L_body = 12 * 0.0254;         %[m] body length 
+r_body = 3.5/2 * 0.0254;      %[m] body radius 
 I = m*(3*r_body^2 + L_body^2)/12 + m*r_0^2;   %[kg m^2] about the pivot
 
 a = m * g * r_0 / I;

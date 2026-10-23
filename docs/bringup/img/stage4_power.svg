@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="560" viewBox="0 0 1300 560">
+<rect width="1300" height="560" fill="#ffffff"/>
+<text x="24" y="36" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#212529" text-anchor="start">Stage 4 -- Power supply and fused branches, NO loads</text>
+<text x="24" y="60" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#495057" text-anchor="start">Wire IDs = docs/icd/power.md. Both branch ends stay OPEN (nothing plugged in). Measure with a multimeter.</text>
+<rect x="40" y="110" width="190" height="134" rx="8" fill="#fff4e6" stroke="#343a40" stroke-width="1.5"/>
+<text x="135.0" y="130" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">AC inlet (IEC C14)</text>
+<text x="135.0" y="147" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">switch + T5A fuse</text>
+<circle cx="230" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="220" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">L</text>
+<circle cx="230" cy="197.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="220" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">N</text>
+<circle cx="230" cy="223.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="220" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">PE</text>
+<rect x="330" y="100" width="230" height="212" rx="8" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<text x="445.0" y="120" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">Mean Well LRS-600-12</text>
+<text x="445.0" y="137" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">INPUT SWITCH = 115 V</text>
+<circle cx="330" cy="161.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="340" y="165.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">1  AC/L</text>
+<circle cx="330" cy="187.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="340" y="191.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">2  AC/N</text>
+<circle cx="330" cy="213.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="340" y="217.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">3  FG (earth)</text>
+<circle cx="560" cy="161.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="550" y="165.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">4  -V</text>
+<circle cx="560" cy="187.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="550" y="191.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">7  +V</text>
+<circle cx="560" cy="213.0" r="4" fill="#ffffff" stroke="#adb5bd" stroke-width="1.5"/>
+<text x="550" y="217.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#adb5bd" text-anchor="end"> </text>
+<circle cx="560" cy="239.0" r="4" fill="#ffffff" stroke="#adb5bd" stroke-width="1.5"/>
+<text x="550" y="243.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#adb5bd" text-anchor="end">  </text>
+<circle cx="560" cy="265.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="550" y="269.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">5  -V</text>
+<circle cx="560" cy="291.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="550" y="295.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">8  +V</text>
+<rect x="660" y="126" width="130" height="82" rx="8" fill="#fff5f5" stroke="#343a40" stroke-width="1.5"/>
+<text x="725.0" y="146" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">F1  15 A</text>
+<text x="725.0" y="163" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">inline blade fuse</text>
+<circle cx="660" cy="187.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="670" y="191.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">IN</text>
+<circle cx="790" cy="187.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="780" y="191.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">OUT</text>
+<rect x="660" y="230" width="130" height="82" rx="8" fill="#fff5f5" stroke="#343a40" stroke-width="1.5"/>
+<text x="725.0" y="250" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">F2  5 A</text>
+<text x="725.0" y="267" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">inline blade fuse</text>
+<circle cx="660" cy="291.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="670" y="295.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">IN</text>
+<circle cx="790" cy="291.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="780" y="295.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">OUT</text>
+<rect x="900" y="100" width="200" height="108" rx="8" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<text x="1000.0" y="120" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">XT60 FEMALE</text>
+<text x="1000.0" y="137" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">EDF branch end (open)</text>
+<circle cx="900" cy="161.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="910" y="165.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">-</text>
+<circle cx="900" cy="187.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="910" y="191.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">+</text>
+<rect x="900" y="217" width="200" height="108" rx="8" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<text x="1000.0" y="237" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">Servo branch leads</text>
+<text x="1000.0" y="254" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">to BusLinker (open)</text>
+<circle cx="900" cy="278.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="910" y="282.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">GND</text>
+<circle cx="900" cy="304.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="910" y="308.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">+12 V</text>
+<polyline points="230.0,171.0 254.0,171.0 280.0,171.0 280.0,161.0 306.0,161.0 330.0,161.0" fill="none" stroke="#8b5a2b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="255.6" y="162.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#8b5a2b" stroke-width="1"/>
+<text x="267.0" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P2</text>
+<polyline points="230.0,197.0 254.0,197.0 280.0,197.0 280.0,187.0 306.0,187.0 330.0,187.0" fill="none" stroke="#1864ab" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="255.6" y="188.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#1864ab" stroke-width="1"/>
+<text x="267.0" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P3</text>
+<polyline points="230.0,223.0 254.0,223.0 280.0,223.0 280.0,213.0 306.0,213.0 330.0,213.0" fill="none" stroke="#5c940d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="255.6" y="214.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#5c940d" stroke-width="1"/>
+<text x="267.0" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P4</text>
+<polyline points="560.0,187.0 584.0,187.0 610.0,187.0 610.0,187.0 636.0,187.0 660.0,187.0" fill="none" stroke="#e03131" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="585.6" y="178.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#e03131" stroke-width="1"/>
+<text x="597.0" y="191.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P5</text>
+<polyline points="790.0,187.0 814.0,187.0 845.0,187.0 845.0,187.0 876.0,187.0 900.0,187.0" fill="none" stroke="#e03131" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="818.1" y="178.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#e03131" stroke-width="1"/>
+<text x="829.5" y="191.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P6</text>
+<polyline points="560.0,161.0 584.0,161.0 600.0,161.0 600.0,112.0 870.0,112.0 870.0,161.0 876.0,161.0 900.0,161.0" fill="none" stroke="#222222" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="698.0" y="103.0" width="74.0" height="17" rx="4" fill="#ffffff" stroke="#222222" stroke-width="1"/>
+<text x="735.0" y="116" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P7  12 AWG</text>
+<polyline points="560.0,291.0 584.0,291.0 610.0,291.0 610.0,291.0 636.0,291.0 660.0,291.0" fill="none" stroke="#e03131" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="585.6" y="282.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#e03131" stroke-width="1"/>
+<text x="597.0" y="295.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P8</text>
+<polyline points="790.0,291.0 814.0,291.0 845.0,291.0 845.0,304.0 876.0,304.0 900.0,304.0" fill="none" stroke="#e03131" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="818.1" y="282.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#e03131" stroke-width="1"/>
+<text x="829.5" y="295.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P9</text>
+<polyline points="560.0,265.0 584.0,265.0 600.0,265.0 600.0,220.0 870.0,220.0 870.0,278.0 876.0,278.0 900.0,278.0" fill="none" stroke="#222222" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="694.8" y="211.0" width="80.4" height="17" rx="4" fill="#ffffff" stroke="#222222" stroke-width="1"/>
+<text x="735.0" y="224" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P10  18 AWG</text>
+<circle cx="1130" cy="175" r="13" fill="#fff3bf" stroke="#e67700" stroke-width="2"/>
+<text x="1130" y="180" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#e67700" text-anchor="middle">V</text>
+<text x="1150" y="180" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#e67700" text-anchor="start">XT60: 12.0 V +/- 0.2</text>
+<circle cx="1130" cy="292" r="13" fill="#fff3bf" stroke="#e67700" stroke-width="2"/>
+<text x="1130" y="297" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#e67700" text-anchor="middle">V</text>
+<text x="1150" y="297" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#e67700" text-anchor="start">leads: 12.0 V</text>
+<text x="1150" y="210" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#e67700" text-anchor="start">red probe on +</text>
+<text x="1150" y="327" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#e67700" text-anchor="start">check polarity!</text>
+<rect x="40" y="360" width="420" height="79" rx="6" fill="#fff5f5" stroke="#e03131" stroke-width="1.5"/>
+<text x="52" y="379" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#e03131" text-anchor="start">WARNING</text>
+<text x="52" y="397" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Mains (120 VAC). Have a TA / lab staff check the</text>
+<text x="52" y="414" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">AC wiring BEFORE the first plug-in. Cover the PSU's</text>
+<text x="52" y="431" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">AC terminals. Set the input switch to 115 V.</text>
+<rect x="480" y="360" width="400" height="79" rx="6" fill="#e7f5ff" stroke="#1c7ed6" stroke-width="1.5"/>
+<text x="492" y="379" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1c7ed6" text-anchor="start">NOTE</text>
+<text x="492" y="397" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Fuses on the + side, close to the PSU.</text>
+<text x="492" y="414" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Fork/ring terminals under every screw.</text>
+<text x="492" y="431" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Thick (12 AWG) = EDF branch, thin = servo.</text>
+<text x="900" y="380" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#495057" text-anchor="start">WIRE COLORS</text>
+<line x1="900" y1="396" x2="928" y2="396" stroke="#8b5a2b" stroke-width="4"/>
+<text x="936" y="400" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#212529" text-anchor="start">AC line (L)</text>
+<line x1="900" y1="414" x2="928" y2="414" stroke="#1864ab" stroke-width="4"/>
+<text x="936" y="418" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#212529" text-anchor="start">AC neutral (N)</text>
+<line x1="900" y1="432" x2="928" y2="432" stroke="#5c940d" stroke-width="4"/>
+<text x="936" y="436" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#212529" text-anchor="start">Earth (PE)</text>
+<line x1="900" y1="450" x2="928" y2="450" stroke="#e03131" stroke-width="4"/>
+<text x="936" y="454" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#212529" text-anchor="start">+12 V</text>
+<line x1="900" y1="468" x2="928" y2="468" stroke="#222222" stroke-width="4"/>
+<text x="936" y="472" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#212529" text-anchor="start">GND</text>
+</svg>

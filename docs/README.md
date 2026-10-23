@@ -12,6 +12,7 @@ Start with **[system_overview.md](system_overview.md)**: block diagram, power bu
 | [icd/servo_bus.md](icd/servo_bus.md) | Teensy ↔ BusLinker ↔ HTD-30H, packet protocol |
 | [icd/imu_i2c.md](icd/imu_i2c.md) | GY-521 wiring and register setup |
 | [icd/usb_link.md](icd/usb_link.md) | Teensy ↔ Pi: telemetry format and commands |
+| [bringup/](bringup/README.md) | **Step-by-step bring-up:** one stage per piece, each with its own wiring diagram, test sketch, and pass criteria |
 | [wiring/](wiring/) | Harness diagram: `tvc_harness.svg` / `.png`, with a BOM in `.bom.tsv` |
 | `datasheets/` | Local copies of the datasheets we rely on |
 | `sketches/` | Hand sketches |

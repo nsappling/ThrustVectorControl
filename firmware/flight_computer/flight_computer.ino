@@ -108,7 +108,7 @@ void setup() {
   servo.setTorque(SERVO_ID, true);
   servo.move(SERVO_ID, tilt_to_counts(0), 500);   // ease to center
 
-  Serial.println(F("t_ms,state,theta_deg,rate_dps,gimbal_cmd_deg,gimbal_meas_deg,throttle,servo_v"));
+  print_header();
   Serial.println(F("# Ready in SAFE. Type 'help'."));
   next_tick_us = micros();
   last_host_ms = millis();
@@ -210,6 +210,12 @@ void handle_serial() {
   }
 }
 
+// CSV header. Printed at boot, and again on the "header" command so a
+// logger that connects after boot (it missed the first one) can ask for it.
+void print_header() {
+  Serial.println(F("t_ms,state,theta_deg,rate_dps,gimbal_cmd_deg,gimbal_meas_deg,throttle,servo_v"));
+}
+
 void print_status() {
   Serial.print(F("# state=")); Serial.print(STATE_NAMES[state]);
   Serial.print(F(" Kp=")); Serial.print(Kp, 3);
@@ -227,6 +233,7 @@ void run_command(char *cmd) {
   if (arg) { *arg = 0; val = atof(arg + 1); }
 
   if (!strcmp(cmd, "hb")) return;   // heartbeat: just refreshes last_host_ms
+  if (!strcmp(cmd, "header")) { print_header(); return; }
   else if (!strcmp(cmd, "stop"))  enter(SAFE, "stop command");
   else if (!strcmp(cmd, "arm")) {
     if (state == SAFE) enter(ARMED, "gimbal active, EDF off");
@@ -251,7 +258,7 @@ void run_command(char *cmd) {
   else if (!strcmp(cmd, "status")) { /* printed below */ }
   else if (!strcmp(cmd, "help")) {
     Serial.println(F("# stop | arm | run | throttle <0-1> | ref <deg> | kp/ki/kd <val>"));
-    Serial.println(F("# trim <counts> | zero | status | hb"));
+    Serial.println(F("# trim <counts> | zero | status | hb | header"));
     return;
   }
   else { Serial.println(F("# Unknown command. Type 'help'.")); return; }

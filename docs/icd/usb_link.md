@@ -44,6 +44,7 @@ Text, `\n` terminated, case-sensitive. The Teensy replies with a `#` line.
 | `kp/ki/kd <val>` | Gains (not saved through power-off) |
 | `trim <counts>` | Servo center offset, ±100 counts (0.24° per count) |
 | `zero` | Re-calibrate the IMU (hold the rocket upright and still); not allowed in RUN |
+| `header` | Re-print the CSV header line (`tvc_logger.py` sends this if it connects after boot and missed it) |
 | `hb` | Heartbeat. In RUN, if `HOST_TIMEOUT_MS` > 0 and no line arrives within it, the Teensy goes to SAFE. |
 
 ## Safety rules (enforced on the Teensy)

@@ -16,16 +16,17 @@ The main controller: IMU → complementary filter → PD(+I) → HTD-30H gimbal 
 3. Upload. Open the Serial Monitor with line ending set to "Newline", and type `help`.
 
 ## Bring-up order (one piece at a time)
+The full procedure, with a wiring diagram and pass criteria for each stage, is in [docs/bringup/README.md](../../docs/bringup/README.md). Summary:
 1. **IMU:** with the Teensy and IMU only, boot and check that `theta_deg` follows a hand tilt with the right sign (`IMU_SIGN`).
 2. **Servo bus:** run `../tests/servo_bus_test` first: read the ID, voltage, and position, then center. Then in `flight_computer`, send `arm` and tilt the IMU by hand. **Direction check:** if the nose tips toward +x (θ > 0), the fan must tilt so its thrust pushes the nose back. If it goes the wrong way, flip `SERVO_DIR`.
 3. **ESC/EDF:** run `../tests/esc_test` for throttle calibration and the current steps (see `docs/icd/edf_esc.md`).
 4. **Closed loop:** `arm` → `throttle 0.15` → `run`. Have a hand on the E-stop. `stop` ends it.
 
 ## Commands
-`stop`, `arm`, `run`, `throttle <0-1>`, `ref <deg>`, `kp/ki/kd <val>`, `trim <counts>`, `zero`, `status`, `hb`. Full table and CSV columns: `docs/icd/usb_link.md`.
+`stop`, `arm`, `run`, `throttle <0-1>`, `ref <deg>`, `kp/ki/kd <val>`, `trim <counts>`, `zero`, `status`, `hb`, `header`. Full table and CSV columns: `docs/icd/usb_link.md`.
 
 ## TODO
 - Non-blocking servo reads. Each read currently blocks the loop for ~2 ms at 20 Hz.
-- Have `tvc_logger.py` send `hb`, then enable `HOST_TIMEOUT_MS`.
+- `tvc_logger.py` now sends `hb` automatically. Set `HOST_TIMEOUT_MS = 1000` before the first run with thrust (bring-up stage 8).
 - Joystick setpoints from the Pi (`ref`).
 - Write the servo angle limits once the gimbal's hard stops are known.

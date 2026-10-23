@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1250" height="640" viewBox="0 0 1250 640">
+<rect width="1250" height="640" fill="#ffffff"/>
+<text x="24" y="36" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#212529" text-anchor="start">Stage 7 -- ESC + EDF, fan RESTRAINED, guard on</text>
+<text x="24" y="60" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#495057" text-anchor="start">Wire IDs = docs/icd/edf_esc.md and power.md. Flash: firmware/tests/esc_test. Servo branch may stay unplugged.</text>
+<rect x="40" y="120" width="170" height="108" rx="8" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<text x="125.0" y="140" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">EDF branch</text>
+<text x="125.0" y="157" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">from Stage 4 (F1 15 A)</text>
+<circle cx="210" cy="181.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="200" y="185.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">+12 V</text>
+<circle cx="210" cy="207.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="200" y="211.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">GND</text>
+<rect x="300" y="120" width="170" height="108" rx="8" fill="#fff4e6" stroke="#343a40" stroke-width="1.5"/>
+<text x="385.0" y="140" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">Inline watt meter</text>
+<text x="385.0" y="157" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">XT60 in / out</text>
+<circle cx="300" cy="181.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="310" y="185.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">in +</text>
+<circle cx="300" cy="207.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="310" y="211.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">in -</text>
+<circle cx="470" cy="181.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="460" y="185.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">out +</text>
+<circle cx="470" cy="207.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="460" y="211.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">out -</text>
+<rect x="580" y="110" width="240" height="212" rx="8" fill="#e7f5ff" stroke="#343a40" stroke-width="1.5"/>
+<text x="700.0" y="130" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">Skywalker 50A V2 ESC</text>
+<text x="700.0" y="147" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">brake OFF</text>
+<circle cx="580" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="590" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">BAT+ (XT60)</text>
+<circle cx="580" cy="197.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="590" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">BAT- (XT60)</text>
+<circle cx="580" cy="223.0" r="4" fill="#ffffff" stroke="#adb5bd" stroke-width="1.5"/>
+<text x="590" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#adb5bd" text-anchor="start"> </text>
+<circle cx="580" cy="249.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="590" y="253.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">SIG (white/yellow)</text>
+<circle cx="580" cy="275.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="590" y="279.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">GND (black/brown)</text>
+<circle cx="580" cy="301.0" r="4" fill="#ffffff" stroke="#adb5bd" stroke-width="1.5"/>
+<text x="590" y="305.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#adb5bd" text-anchor="start">BEC +5 V (red)</text>
+<circle cx="820" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="810" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">MOT A</text>
+<circle cx="820" cy="197.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="810" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">MOT B</text>
+<circle cx="820" cy="223.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="810" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">MOT C</text>
+<rect x="960" y="110" width="210" height="134" rx="8" fill="#f8f9fa" stroke="#343a40" stroke-width="1.5"/>
+<text x="1065.0" y="130" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">JFtech 64 mm EDF</text>
+<text x="1065.0" y="147" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">3.5 mm bullets</text>
+<circle cx="960" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="970" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">A</text>
+<circle cx="960" cy="197.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="970" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">B</text>
+<circle cx="960" cy="223.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="970" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">C</text>
+<rect x="240" y="370" width="200" height="108" rx="8" fill="#e6fcf5" stroke="#343a40" stroke-width="1.5"/>
+<text x="340.0" y="390" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">Teensy 4.0</text>
+<text x="340.0" y="407" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">esc_test</text>
+<circle cx="240" cy="431.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="250" y="435.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">USB (micro)</text>
+<circle cx="440" cy="431.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="430" y="435.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">2 (PWM)</text>
+<circle cx="440" cy="457.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="430" y="461.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">GND</text>
+<rect x="20" y="470" width="170" height="82" rx="8" fill="#fff0f6" stroke="#343a40" stroke-width="1.5"/>
+<text x="105.0" y="490" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">Raspberry Pi 5</text>
+<circle cx="190" cy="531.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="180" y="535.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">USB-A</text>
+<polyline points="210.0,181.0 234.0,181.0 255.0,181.0 255.0,181.0 276.0,181.0 300.0,181.0" fill="none" stroke="#e03131" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="210.6" y="172.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#e03131" stroke-width="1"/>
+<text x="222.0" y="185.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P6</text>
+<polyline points="210.0,207.0 234.0,207.0 255.0,207.0 255.0,207.0 276.0,207.0 300.0,207.0" fill="none" stroke="#222222" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="210.6" y="198.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#222222" stroke-width="1"/>
+<text x="222.0" y="211.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">P7</text>
+<polyline points="470.0,181.0 494.0,181.0 525.0,181.0 525.0,171.0 556.0,171.0 580.0,171.0" fill="none" stroke="#e03131" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="498.1" y="172.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#e03131" stroke-width="1"/>
+<text x="509.5" y="185.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">E1</text>
+<polyline points="470.0,207.0 494.0,207.0 525.0,207.0 525.0,197.0 556.0,197.0 580.0,197.0" fill="none" stroke="#222222" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="498.1" y="198.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#222222" stroke-width="1"/>
+<text x="509.5" y="211.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">E1</text>
+<polyline points="820.0,171.0 844.0,171.0 890.0,171.0 890.0,171.0 936.0,171.0 960.0,171.0" fill="none" stroke="#495057" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="855.6" y="162.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#495057" stroke-width="1"/>
+<text x="867.0" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">E2</text>
+<polyline points="820.0,197.0 844.0,197.0 890.0,197.0 890.0,197.0 936.0,197.0 960.0,197.0" fill="none" stroke="#495057" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="820.0,223.0 844.0,223.0 890.0,223.0 890.0,223.0 936.0,223.0 960.0,223.0" fill="none" stroke="#495057" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="440.0,431.0 464.0,431.0 500.0,431.0 500.0,249.0 556.0,249.0 580.0,249.0" fill="none" stroke="#0c8599" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="516.6" y="240.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#0c8599" stroke-width="1"/>
+<text x="528.0" y="253.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">E3</text>
+<polyline points="440.0,457.0 464.0,457.0 515.0,457.0 515.0,275.0 556.0,275.0 580.0,275.0" fill="none" stroke="#222222" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="478.1" y="448.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#222222" stroke-width="1"/>
+<text x="489.5" y="461.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">E4</text>
+<line x1="580" y1="301.0" x2="550" y2="301.0" stroke="#e03131" stroke-width="3"/>
+<line x1="544" y1="295.0" x2="556" y2="307.0" stroke="#e03131" stroke-width="3"/>
+<line x1="544" y1="307.0" x2="556" y2="295.0" stroke="#e03131" stroke-width="3"/>
+<text x="538" y="305.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#e03131" text-anchor="end"></text>
+<text x="600" y="345" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="700" fill="#e03131" text-anchor="start">E5: the ESC's red BEC wire is NOT connected -- pull it from the plug or insulate it</text>
+<polyline points="190.0,531.0 214.0,531.0 215.0,531.0 215.0,431.0 216.0,431.0 240.0,431.0" fill="none" stroke="#868e96" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="187.4" y="522.0" width="29.2" height="17" rx="4" fill="#ffffff" stroke="#868e96" stroke-width="1"/>
+<text x="202.0" y="535.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">USB</text>
+<rect x="560" y="370" width="640" height="96" rx="6" fill="#fff5f5" stroke="#e03131" stroke-width="1.5"/>
+<text x="572" y="389" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#e03131" text-anchor="start">WARNING</text>
+<text x="572" y="407" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">EDF clamped to the bench, guard on, NOBODY in line with intake or exhaust.</text>
+<text x="572" y="424" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Hand on the AC switch / E-stop. Eye protection. Start at 't 0.05'.</text>
+<text x="572" y="441" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Air must blow OUT the exhaust: if not, swap any two motor wires (E2).</text>
+<text x="572" y="458" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Raise THROTTLE_MAX only in small steps, watching the meter (&lt; ~12 A).</text>
+<rect x="560" y="500" width="640" height="79" rx="6" fill="#ebfbee" stroke="#2f9e44" stroke-width="1.5"/>
+<text x="572" y="519" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#2f9e44" text-anchor="start">PASS WHEN</text>
+<text x="572" y="537" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Calibration beeps as the manual describes; 's' always stops the fan;</text>
+<text x="572" y="554" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">UNPLUGGING the Teensy's USB also stops it (ESC signal-loss protection).</text>
+<text x="572" y="571" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Each throttle step + current logged in docs/icd/edf_esc.md.</text>
+</svg>

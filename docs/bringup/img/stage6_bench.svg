@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1250" height="600" viewBox="0 0 1250 600">
+<rect width="1250" height="600" fill="#ffffff"/>
+<text x="24" y="36" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#212529" text-anchor="start">Stage 6 -- Closed-loop bench test: IMU + servo, EDF UNPLUGGED</text>
+<text x="24" y="60" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#495057" text-anchor="start">Stage 2 + Stage 5 wiring together. Flash: firmware/flight_computer. Tilt the IMU by hand; the gimbal answers.</text>
+<rect x="40" y="110" width="170" height="160" rx="8" fill="#fff9db" stroke="#343a40" stroke-width="1.5"/>
+<text x="125.0" y="130" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">GY-521</text>
+<circle cx="210" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="200" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">VCC</text>
+<circle cx="210" cy="197.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="200" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">GND</text>
+<circle cx="210" cy="223.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="200" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">SCL</text>
+<circle cx="210" cy="249.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="200" y="253.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">SDA</text>
+<rect x="360" y="110" width="220" height="212" rx="8" fill="#e6fcf5" stroke="#343a40" stroke-width="1.5"/>
+<text x="470.0" y="130" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">Teensy 4.0</text>
+<text x="470.0" y="147" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">flight_computer</text>
+<circle cx="360" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="370" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">3.3V</text>
+<circle cx="360" cy="197.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="370" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">GND</text>
+<circle cx="360" cy="223.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="370" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">19 (SCL)</text>
+<circle cx="360" cy="249.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="370" y="253.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">18 (SDA)</text>
+<circle cx="360" cy="275.0" r="4" fill="#ffffff" stroke="#adb5bd" stroke-width="1.5"/>
+<text x="370" y="279.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#adb5bd" text-anchor="start"> </text>
+<circle cx="360" cy="301.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="370" y="305.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">USB (micro)</text>
+<circle cx="580" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="570" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">1 (TX1)</text>
+<circle cx="580" cy="197.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="570" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">0 (RX1)</text>
+<circle cx="580" cy="223.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="570" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">3.3V </text>
+<circle cx="580" cy="249.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="570" y="253.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">GND </text>
+<circle cx="580" cy="275.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="570" y="279.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">VIN (5 V)</text>
+<rect x="700" y="110" width="160" height="160" rx="8" fill="#f3f0ff" stroke="#343a40" stroke-width="1.5"/>
+<text x="780.0" y="130" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">Level shifter</text>
+<circle cx="700" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="710" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">LV2</text>
+<circle cx="700" cy="197.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="710" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">LV1</text>
+<circle cx="700" cy="223.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="710" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">LV</text>
+<circle cx="700" cy="249.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="710" y="253.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">GND</text>
+<circle cx="860" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="850" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">HV2</text>
+<circle cx="860" cy="197.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="850" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">HV1</text>
+<circle cx="860" cy="223.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="850" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">HV</text>
+<circle cx="860" cy="249.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="850" y="253.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">GND </text>
+<rect x="980" y="110" width="200" height="134" rx="8" fill="#fff4e6" stroke="#343a40" stroke-width="1.5"/>
+<text x="1080.0" y="130" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">BusLinker</text>
+<text x="1080.0" y="147" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">Servo + TTL</text>
+<circle cx="980" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="990" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">RX</text>
+<circle cx="980" cy="197.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="990" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">TX</text>
+<circle cx="980" cy="223.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="990" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">GND</text>
+<circle cx="1180" cy="171.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="1170" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">servo port</text>
+<rect x="1000" y="330" width="190" height="82" rx="8" fill="#fff9db" stroke="#343a40" stroke-width="1.5"/>
+<text x="1095.0" y="350" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">HTD-30H</text>
+<text x="1095.0" y="367" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">on the gimbal</text>
+<circle cx="1000" cy="391.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="1010" y="395.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="start">cable</text>
+<rect x="40" y="330" width="170" height="82" rx="8" fill="#fff0f6" stroke="#343a40" stroke-width="1.5"/>
+<text x="125.0" y="350" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#212529" text-anchor="middle">Raspberry Pi 5</text>
+<text x="125.0" y="367" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#495057" text-anchor="middle">tvc_logger.py</text>
+<circle cx="210" cy="391.0" r="4" fill="#ffffff" stroke="#343a40" stroke-width="1.5"/>
+<text x="200" y="395.0" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#212529" text-anchor="end">USB-A</text>
+<polyline points="210.0,171.0 234.0,171.0 285.0,171.0 285.0,171.0 336.0,171.0 360.0,171.0" fill="none" stroke="#f08c00" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="248.1" y="162.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#f08c00" stroke-width="1"/>
+<text x="259.5" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">I1</text>
+<polyline points="210.0,197.0 234.0,197.0 285.0,197.0 285.0,197.0 336.0,197.0 360.0,197.0" fill="none" stroke="#222222" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="248.1" y="188.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#222222" stroke-width="1"/>
+<text x="259.5" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">I2</text>
+<polyline points="210.0,223.0 234.0,223.0 285.0,223.0 285.0,223.0 336.0,223.0 360.0,223.0" fill="none" stroke="#c9a227" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="248.1" y="214.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#c9a227" stroke-width="1"/>
+<text x="259.5" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">I3</text>
+<polyline points="210.0,249.0 234.0,249.0 285.0,249.0 285.0,249.0 336.0,249.0 360.0,249.0" fill="none" stroke="#2f9e44" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="248.1" y="240.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#2f9e44" stroke-width="1"/>
+<text x="259.5" y="253.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">I4</text>
+<polyline points="210.0,391.0 234.0,391.0 290.0,391.0 290.0,301.0 336.0,301.0 360.0,301.0" fill="none" stroke="#868e96" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="247.4" y="382.0" width="29.2" height="17" rx="4" fill="#ffffff" stroke="#868e96" stroke-width="1"/>
+<text x="262.0" y="395.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">USB</text>
+<polyline points="580.0,171.0 604.0,171.0 640.0,171.0 640.0,171.0 676.0,171.0 700.0,171.0" fill="none" stroke="#1c7ed6" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="610.6" y="162.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#1c7ed6" stroke-width="1"/>
+<text x="622.0" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">S1</text>
+<polyline points="580.0,197.0 604.0,197.0 640.0,197.0 640.0,197.0 676.0,197.0 700.0,197.0" fill="none" stroke="#7048e8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="610.6" y="188.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#7048e8" stroke-width="1"/>
+<text x="622.0" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">S4</text>
+<polyline points="580.0,223.0 604.0,223.0 640.0,223.0 640.0,223.0 676.0,223.0 700.0,223.0" fill="none" stroke="#f08c00" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="610.6" y="214.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#f08c00" stroke-width="1"/>
+<text x="622.0" y="227.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">S5</text>
+<polyline points="580.0,249.0 604.0,249.0 640.0,249.0 640.0,249.0 676.0,249.0 700.0,249.0" fill="none" stroke="#222222" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="610.6" y="240.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#222222" stroke-width="1"/>
+<text x="622.0" y="253.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">S7</text>
+<polyline points="580.0,275.0 604.0,275.0 640.0,275.0 640.0,335.0 900.0,335.0 900.0,223.0 900.0,223.0 860.0,223.0" fill="none" stroke="#d6336c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="758.6" y="326.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#d6336c" stroke-width="1"/>
+<text x="770.0" y="339" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">S6</text>
+<polyline points="860.0,171.0 884.0,171.0 920.0,171.0 920.0,171.0 956.0,171.0 980.0,171.0" fill="none" stroke="#1c7ed6" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="890.6" y="162.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#1c7ed6" stroke-width="1"/>
+<text x="902.0" y="175.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">S2</text>
+<polyline points="860.0,197.0 884.0,197.0 920.0,197.0 920.0,197.0 956.0,197.0 980.0,197.0" fill="none" stroke="#7048e8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="890.6" y="188.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#7048e8" stroke-width="1"/>
+<text x="902.0" y="201.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">S3</text>
+<polyline points="860.0,249.0 884.0,249.0 930.0,249.0 930.0,223.0 956.0,223.0 980.0,223.0" fill="none" stroke="#222222" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="895.6" y="240.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#222222" stroke-width="1"/>
+<text x="907.0" y="253.0" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">S7</text>
+<polyline points="1180.0,171.0 1204.0,171.0 1220.0,171.0 1220.0,305.0 970.0,305.0 970.0,391.0 970.0,391.0 1000.0,391.0" fill="none" stroke="#f59f00" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="1083.6" y="296.0" width="22.8" height="17" rx="4" fill="#ffffff" stroke="#f59f00" stroke-width="1"/>
+<text x="1095.0" y="309" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#212529" text-anchor="middle">S8</text>
+<rect x="240" y="450" width="460" height="96" rx="6" fill="#e7f5ff" stroke="#1c7ed6" stroke-width="1.5"/>
+<text x="252" y="469" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#1c7ed6" text-anchor="start">NOTE</text>
+<text x="252" y="487" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Teensy 3.3V and GND each feed TWO things (IMU and</text>
+<text x="252" y="504" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">shifter). Same physical pin: use a short splice or a</text>
+<text x="252" y="521" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">breadboard rail. BusLinker power = Stage 4 servo branch.</text>
+<text x="252" y="538" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">EDF branch XT60: UNPLUGGED for this whole stage.</text>
+<rect x="720" y="450" width="500" height="79" rx="6" fill="#ebfbee" stroke="#2f9e44" stroke-width="1.5"/>
+<text x="732" y="469" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#2f9e44" text-anchor="start">PASS WHEN</text>
+<text x="732" y="487" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">'arm', then nose tips toward +x (theta &gt; 0):</text>
+<text x="732" y="504" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">the fan tilts so its thrust pushes the nose BACK.</text>
+<text x="732" y="521" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#212529" text-anchor="start">Wrong way -&gt; flip SERVO_DIR in config.h. 'stop' re-centers.</text>
+</svg>

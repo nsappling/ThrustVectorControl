@@ -1,16 +1,16 @@
 # ICD: Servo Bus (Teensy ↔ BusLinker ↔ HTD-30H)
 
-**Endpoints:** Teensy Serial1 → level shifter → BusLinker TTL header → servo bus → HTD-30H (ID 1)
+**Endpoints:** Teensy Serial2 → level shifter → BusLinker TTL header → servo bus → HTD-30H (ID 1)
 **Status:** Preliminary. The BusLinker header pinout and logic level still need checking.
 
 ## Connections
 
 | # | From | To | Wire | Notes |
 |---|---|---|---|---|
-| S1 | Teensy pin 1 (TX1) | Level shifter LV2 | 26 AWG | |
+| S1 | Teensy pin 8 (TX2) | Level shifter LV2 | 26 AWG | |
 | S2 | Level shifter HV2 | BusLinker **RX** | 26 AWG | |
 | S3 | BusLinker **TX** | Level shifter HV1 | 26 AWG | |
-| S4 | Level shifter LV1 | Teensy pin 0 (RX1) | 26 AWG | |
+| S4 | Level shifter LV1 | Teensy pin 7 (RX2) | 26 AWG | |
 | S5 | Teensy 3.3V | Level shifter LV | 26 AWG | |
 | S6 | Teensy VIN (5 V) | Level shifter HV | 26 AWG | |
 | S7 | Teensy GND | Level shifter GND + BusLinker GND | 26 AWG | |

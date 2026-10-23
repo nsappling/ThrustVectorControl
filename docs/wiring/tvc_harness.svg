@@ -860,13 +860,13 @@
 <polygon fill="none" stroke="black" points="4619.5,-504.5 4619.5,-527.5 4707.5,-527.5 4707.5,-504.5 4619.5,-504.5"/>
 <text text-anchor="start" x="4659.5" y="-512.3" font-family="arial" font-size="14.00">1</text>
 <polygon fill="none" stroke="black" points="4707.5,-504.5 4707.5,-527.5 4826.5,-527.5 4826.5,-504.5 4707.5,-504.5"/>
-<text text-anchor="start" x="4748" y="-512.3" font-family="arial" font-size="14.00">0 RX1</text>
+<text text-anchor="start" x="4748" y="-512.3" font-family="arial" font-size="14.00">7 RX2</text>
 <polygon fill="none" stroke="black" points="4826.5,-504.5 4826.5,-527.5 4913.5,-527.5 4913.5,-504.5 4826.5,-504.5"/>
 <text text-anchor="start" x="4866" y="-512.3" font-family="arial" font-size="14.00">1</text>
 <polygon fill="none" stroke="black" points="4619.5,-481.5 4619.5,-504.5 4707.5,-504.5 4707.5,-481.5 4619.5,-481.5"/>
 <text text-anchor="start" x="4659.5" y="-489.3" font-family="arial" font-size="14.00">2</text>
 <polygon fill="none" stroke="black" points="4707.5,-481.5 4707.5,-504.5 4826.5,-504.5 4826.5,-481.5 4707.5,-481.5"/>
-<text text-anchor="start" x="4748.5" y="-489.3" font-family="arial" font-size="14.00">1 TX1</text>
+<text text-anchor="start" x="4748.5" y="-489.3" font-family="arial" font-size="14.00">8 TX2</text>
 <polygon fill="none" stroke="black" points="4826.5,-481.5 4826.5,-504.5 4913.5,-504.5 4913.5,-481.5 4826.5,-481.5"/>
 <text text-anchor="start" x="4866" y="-489.3" font-family="arial" font-size="14.00">2</text>
 <polygon fill="none" stroke="black" points="4619.5,-458.5 4619.5,-481.5 4707.5,-481.5 4707.5,-458.5 4619.5,-458.5"/>
@@ -1031,16 +1031,16 @@
 <text text-anchor="start" x="4341.5" y="-570.3" font-family="arial" font-size="14.00">26 AWG</text>
 <text text-anchor="start" x="4150.5" y="-549.3" font-family="arial" font-size="14.00"> </text>
 <text text-anchor="start" x="4104" y="-530.3" font-family="arial" font-size="14.00">SHIFTER:2:LV1</text>
-<text text-anchor="start" x="4208.5" y="-530.3" font-family="arial" font-size="14.00"> &#160;&#160;&#160;&#160;OG:S4 LV1 to RX1 &#160;&#160;&#160;</text>
-<text text-anchor="start" x="4361.5" y="-530.3" font-family="arial" font-size="14.00">TEENSY:1:0 RX1</text>
+<text text-anchor="start" x="4208.5" y="-530.3" font-family="arial" font-size="14.00"> &#160;&#160;&#160;&#160;OG:S4 LV1 to RX2 &#160;&#160;&#160;</text>
+<text text-anchor="start" x="4361.5" y="-530.3" font-family="arial" font-size="14.00">TEENSY:1:7 RX2</text>
 <polygon fill="#000000" stroke="transparent" points="4098.5,-522.5 4098.5,-524.5 4469.5,-524.5 4469.5,-522.5 4098.5,-522.5"/>
 <polygon fill="#ff8000" stroke="transparent" points="4098.5,-520.5 4098.5,-522.5 4469.5,-522.5 4469.5,-520.5 4098.5,-520.5"/>
 <polygon fill="#ff8000" stroke="transparent" points="4098.5,-518.5 4098.5,-520.5 4469.5,-520.5 4469.5,-518.5 4098.5,-518.5"/>
 <polygon fill="#ff8000" stroke="transparent" points="4098.5,-516.5 4098.5,-518.5 4469.5,-518.5 4469.5,-516.5 4098.5,-516.5"/>
 <polygon fill="#000000" stroke="transparent" points="4098.5,-514.5 4098.5,-516.5 4469.5,-516.5 4469.5,-514.5 4098.5,-514.5"/>
 <text text-anchor="start" x="4104" y="-501.3" font-family="arial" font-size="14.00">SHIFTER:3:LV2</text>
-<text text-anchor="start" x="4211.5" y="-501.3" font-family="arial" font-size="14.00"> &#160;&#160;&#160;&#160;YE:S1 TX1 to LV2 &#160;&#160;&#160;</text>
-<text text-anchor="start" x="4362" y="-501.3" font-family="arial" font-size="14.00">TEENSY:2:1 TX1</text>
+<text text-anchor="start" x="4211.5" y="-501.3" font-family="arial" font-size="14.00"> &#160;&#160;&#160;&#160;YE:S1 TX2 to LV2 &#160;&#160;&#160;</text>
+<text text-anchor="start" x="4362" y="-501.3" font-family="arial" font-size="14.00">TEENSY:2:8 TX2</text>
 <polygon fill="#000000" stroke="transparent" points="4098.5,-493.5 4098.5,-495.5 4469.5,-495.5 4469.5,-493.5 4098.5,-493.5"/>
 <polygon fill="#ffff00" stroke="transparent" points="4098.5,-491.5 4098.5,-493.5 4469.5,-493.5 4469.5,-491.5 4098.5,-491.5"/>
 <polygon fill="#ffff00" stroke="transparent" points="4098.5,-489.5 4098.5,-491.5 4469.5,-491.5 4469.5,-489.5 4098.5,-489.5"/>

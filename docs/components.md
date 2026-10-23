@@ -90,7 +90,7 @@ Some Hiwonder docs show 1 Mbaud and 4096-count positions. Those are for their ne
 | USB | Micro-USB, native 480 Mbit/s serial (the baud setting is ignored) |
 | Memory | 8 MB flash, 1 MB RAM, microSD slot (could log onboard if ever needed) |
 | Size | 61 × 18 mm. Pins 0–23 sit where they do on a Teensy 4.0, so the pin table carries over. |
-| Used peripherals | Serial1 (pins 0/1), Wire (pins 18/19), PWM (pin 2) |
+| Used peripherals | Serial2 (pins 7/8), Wire (pins 18/19), PWM (pin 2) |
 
 ## Ground computer: Raspberry Pi 5
 - Power: official 5 V 5 A USB-C supply.

@@ -31,10 +31,22 @@
 //   g   go: follow the IMU again
 //   s   swap direction (servo turns the other way)
 //
+// SETTING THE CENTER (servo 500 is usually NOT "fan straight")
+//   1. Type h. The servo goes to its center and holds.
+//   2. Nudge it until the fan points straight down the rocket body:
+//        +  /  -    move 1 count  (0.24 deg)
+//        ]  /  [    move 10 counts (2.4 deg)
+//   3. The current center is printed after every nudge. Copy that number
+//      into SERVO_CENTER below (and config.h for flight_computer), upload
+//      again, and type g to follow.
+//   If you need more than ~50 counts (12 deg), re-seat the servo horn one
+//   spline tooth closer to straight instead, so the full travel stays
+//   usable on both sides.
+//
 // What gets printed 10x per second:
 //   imu_deg  = filtered IMU tilt about the gimbal axis
 //   servo_deg = what the servo was told (after clamping)
-//   counts   = the servo position actually sent (500 = center)
+//   counts   = the servo position actually sent (center = fan straight)
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -56,9 +68,9 @@ const int SIDE_AXIS = 0;
 const float FOLLOW_GAIN = 1.0;        // servo deg per IMU deg (1.0 = one to one)
 float servo_dir = 1.0;                // +1 / -1. Flip with "s" if it turns the wrong way.
 
-const int   SERVO_CENTER = 500;       // counts = 0 deg
-const int   SERVO_MIN    = 350;       // same safe range as Kailash's test,
-const int   SERVO_MAX    = 650;       // about +/-36 deg
+const int   SERVO_CENTER = 500;       // counts where the FAN is straight. Find it with h, +/-, [/]
+const int   SERVO_RANGE  = 150;       // allowed counts each side of center (~36 deg),
+                                      // same as Kailash's 350..650 test
 const float COUNTS_PER_DEG = 1000.0 / 240.0;   // HTD-30H: 0..1000 counts = 0..240 deg
 
 const float COMP_TAU = 0.5;           // [s] complementary filter time constant.
@@ -82,12 +94,14 @@ float angle_deg = 0;      // filtered tilt
 float servo_deg = 0;
 int   counts_sent = SERVO_CENTER;
 bool  following = true;
+int   center = SERVO_CENTER;   // live center, nudged with + - [ ]
 
 // ---------------------------------------------------------------------
 // SERVO (HiWonder 0x55 0x55 move command, as in Kailash's sketch)
 // ---------------------------------------------------------------------
 void moveServo(uint16_t position, uint16_t duration) {
-  position = constrain(position, SERVO_MIN, SERVO_MAX);
+  position = constrain(position, center - SERVO_RANGE, center + SERVO_RANGE);
+  position = constrain(position, 0, 1000);   // servo's own limits
 
   uint8_t packet[10] = {
     0x55, 0x55,                 // Header
@@ -207,10 +221,11 @@ void setup() {
   imuWrite(0x1C, 0x08);   // ACCEL_CONFIG: +/-4 g
   delay(100);
 
-  moveServo(SERVO_CENTER, 500);   // ease to center first
+  moveServo(center, 500);         // ease to center first
   delay(600);
   calibrate();
   Serial.println("# Following. Commands: z (re-zero) | h (hold) | g (go) | s (swap direction)");
+  Serial.println("# Center: h, then + - (1 count) or ] [ (10 counts)");
   Serial.println("imu_deg,servo_deg,counts");
 }
 
@@ -237,7 +252,7 @@ void loop() {
   if (now_ms - last_servo_ms >= SERVO_PERIOD_MS) {
     last_servo_ms = now_ms;
     servo_deg = following ? servo_dir * FOLLOW_GAIN * angle_deg : 0;
-    int counts = SERVO_CENTER + (int)lroundf(servo_deg * COUNTS_PER_DEG);
+    int counts = center + (int)lroundf(servo_deg * COUNTS_PER_DEG);
     moveServo(counts, SERVO_PERIOD_MS);   // reach it by the next update
   }
 
@@ -245,7 +260,7 @@ void loop() {
   if (now_ms - last_print_ms >= PRINT_PERIOD_MS) {
     last_print_ms = now_ms;
     Serial.print(angle_deg, 2); Serial.print(',');
-    Serial.print((counts_sent - SERVO_CENTER) / COUNTS_PER_DEG, 2); Serial.print(',');
+    Serial.print((counts_sent - center) / COUNTS_PER_DEG, 2); Serial.print(',');
     Serial.println(counts_sent);
   }
 
@@ -256,6 +271,13 @@ void loop() {
     else if (c == 'h' || c == 'H') { following = false; Serial.println("# hold at center"); }
     else if (c == 'g' || c == 'G') { following = true;  Serial.println("# following"); }
     else if (c == 's' || c == 'S') { servo_dir = -servo_dir; Serial.println("# direction swapped"); }
+    else if (c == '+' || c == '=' || c == '-' || c == ']' || c == '[') {
+      int step = (c == ']') ? 10 : (c == '[') ? -10 : (c == '-') ? -1 : 1;
+      center = constrain(center + step, SERVO_RANGE, 1000 - SERVO_RANGE);
+      Serial.print("# center = "); Serial.print(center);
+      Serial.print("  (trim "); Serial.print(center - 500);
+      Serial.println(" counts from servo 500)");
+    }
   }
 
   // Throw away anything the BusLinker echoes back (move commands get no reply).

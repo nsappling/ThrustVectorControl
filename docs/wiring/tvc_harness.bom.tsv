@@ -13,7 +13,7 @@ Id	Description	Qty	Unit	Designators
 12	Connector, JFtech 64mm 4300KV EDF, 3.5mm bullets, 3 pins	1		EDF
 13	Connector, Mean Well LRS-600-12, screw terminals (set input switch to 115V!), 9 pins	1		PSU
 14	Connector, Raspberry Pi 5, own 5V 5A USB-C supply, 1 pins	1		PI
-15	Connector, Teensy 4.0, 3.3V logic, NOT 5V tolerant, 10 pins	1		TEENSY
+15	Connector, Teensy 4.1, 3.3V logic, NOT 5V tolerant, 10 pins	1		TEENSY
 16	Connector, XT60 (female supply / male ESC), 2 pins	1		XT60
 17	Wire, 12 AWG, BK	0	m	EDF_PWR_A, ESC_IN, PHASES
 18	Wire, 12 AWG, RD	0	m	EDF_PWR_A, ESC_IN

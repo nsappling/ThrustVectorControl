@@ -1,4 +1,4 @@
-// flight_computer.ino -- Teensy 4.0 flight computer for the 1-DOF TVC demonstrator.
+// flight_computer.ino -- Teensy 4.1 flight computer for the 1-DOF TVC demonstrator.
 //
 //   GY-521 IMU --I2C--> Teensy --UART--> BusLinker --bus--> HTD-30H gimbal servo
 //                          |  \--PWM--> ESC --> EDF

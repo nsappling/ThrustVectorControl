@@ -1,4 +1,4 @@
-# flight_computer (Teensy 4.0)
+# flight_computer (Teensy 4.1)
 
 The main controller: IMU → complementary filter → PD(+I) → HTD-30H gimbal servo, plus EDF throttle and the safety state machine. The control law matches `sim/tvc_sim/tvc_simulate.m`.
 
@@ -12,7 +12,7 @@ The main controller: IMU → complementary filter → PD(+I) → HTD-30H gimbal 
 
 ## Setup
 1. Install the Arduino IDE 2 and add Teensy support: in **Preferences → Additional boards manager URLs**, add `https://www.pjrc.com/teensy/package_teensy_index.json`. Then go to **Boards Manager → install "Teensy"**.
-2. Open `flight_computer.ino` (the other files open as tabs). Set **Board: Teensy 4.0** and **USB Type: Serial**.
+2. Open `flight_computer.ino` (the other files open as tabs). Set **Board: Teensy 4.1** and **USB Type: Serial**.
 3. Upload. Open the Serial Monitor with line ending set to "Newline", and type `help`.
 
 ## Bring-up order (one piece at a time)

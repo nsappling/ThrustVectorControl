@@ -56,11 +56,12 @@ A short list of the considerations behind each part choice, to show *why* each p
 - I2C at 400 kHz, powered from 3.3 V so its pull-ups stay Teensy-safe ✅.
 - Cheap and well documented. If vibration noise turns out to be bad, upgrade to an ICM-42688 or BNO085.
 
-### Flight computer: [Teensy 4.0](https://www.pjrc.com/store/teensy40.html)
+### Flight computer: [Teensy 4.1](https://www.pjrc.com/store/teensy41.html)
 - Needs plenty of headroom for a 400 Hz loop: 600 MHz Cortex-M7 ✅.
 - Needs the right peripherals: UART (servo), I2C (IMU), PWM (ESC), native USB (Pi) ✅.
 - 3.3 V logic, which forces level shifting on the servo bus.
-- Small and light if it rides on the rocket. Arduino IDE support, so the team's workflow carries over from the Uno. ~$24.
+- Arduino IDE support, so the team's workflow carries over from the Uno. ~$32.
+- Replaced the Teensy 4.0 (same MCU, ~$24, shorter). Pins 0–23 are in the same places on both, so the pin table and firmware carry over; the 4.1 adds pins, 8 MB flash, and a microSD slot.
 
 ### Ground computer: [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/)
 - Kept out of the real-time loop: it only handles logging, tuning, the joystick, and the exhibit display.

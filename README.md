@@ -52,7 +52,7 @@ error = desired angle - measured angle
 ## Repository Layout
 
 ```
-firmware/   Flight computer code (Teensy 4.0; older Uno sketches kept for reference)
+firmware/   Flight computer code (Teensy 4.1; older Uno sketches kept for reference)
 ground/     Raspberry Pi 5 code: logging, tuning, later the joystick/exhibit UI
 sim/        MATLAB simulations and controller design
 cad/        SolidWorks parts/assemblies and STLs for printing

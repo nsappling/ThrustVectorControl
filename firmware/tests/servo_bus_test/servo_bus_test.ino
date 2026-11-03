@@ -1,5 +1,6 @@
 // servo_bus_test.ino -- first power-up check of the HTD-30H through the BusLinker.
-// Board: Teensy 4.0. Wiring: docs/icd/servo_bus.md (Serial1 pins 0/1 via
+// Board: Teensy 4.1. Wiring: docs/icd/servo_bus.md (Serial2: pin 8 TX2 ->
+// BusLinker RX, pin 7 RX2 <- BusLinker TX, via
 // the level shifter). BusLinker jumpers on "Servo + TTL". Only ONE servo
 // on the bus (the ID read uses broadcast).
 //
@@ -20,22 +21,22 @@ int pos_cmd = 500;
 void send(uint8_t sid, uint8_t cmd, const uint8_t *p, uint8_t n) {
   uint8_t len = n + 3, sum = sid + len + cmd;
   uint8_t hdr[5] = { 0x55, 0x55, sid, len, cmd };
-  Serial1.write(hdr, 5);
-  for (uint8_t i = 0; i < n; i++) { Serial1.write(p[i]); sum += p[i]; }
-  Serial1.write((uint8_t)~sum);
+  Serial2.write(hdr, 5);
+  for (uint8_t i = 0; i < n; i++) { Serial2.write(p[i]); sum += p[i]; }
+  Serial2.write((uint8_t)~sum);
 }
 
 // Send a read command; return the number of reply params (or -1). Prints
 // every raw byte received, which helps debug wiring (e.g. only seeing our
 // own echo means TX works but the servo isn't answering).
 int request(uint8_t sid, uint8_t cmd, uint8_t *out) {
-  while (Serial1.available()) Serial1.read();
+  while (Serial2.available()) Serial2.read();
   send(sid, cmd, nullptr, 0);
-  Serial1.flush();
+  Serial2.flush();
   uint8_t buf[32];
   int n = 0;
   uint32_t t0 = millis();
-  while (millis() - t0 < 20 && n < 32) if (Serial1.available()) buf[n++] = Serial1.read();
+  while (millis() - t0 < 20 && n < 32) if (Serial2.available()) buf[n++] = Serial2.read();
   Serial.print("  raw:");
   for (int i = 0; i < n; i++) { Serial.print(' '); Serial.print(buf[i], HEX); }
   Serial.println(n ? "" : " (nothing -- check TX/RX swap, jumpers, servo power)");
@@ -61,7 +62,7 @@ void move(int pos, uint16_t ms) {
 
 void setup() {
   Serial.begin(115200);
-  Serial1.begin(BAUD);
+  Serial2.begin(BAUD);
   while (!Serial && millis() < 3000) {}
   Serial.println("# servo_bus_test: i r c + - w l t");
 }

@@ -28,7 +28,7 @@ flowchart LR
 
     IMU <-->|"I2C 400 kHz"| TEENSY
     TEENSY -->|"PWM 50 Hz<br/>1000-2000 µs"| ESC
-    TEENSY <-->|"UART 115200<br/>via 3.3/5 V level shifter"| BL
+    TEENSY <-->|"UART 115200<br/>direct, 3.3 V"| BL
     TEENSY <-->|"USB serial<br/>+ 5 V power"| PI["Raspberry Pi 5<br/>ground computer"]
     WALL5["5 V 5 A USB-C supply"] --> PI
 ```
@@ -65,7 +65,7 @@ All grounds are tied together: PSU −V, ESC, BusLinker, Teensy, and IMU. The Pi
 
 1. **The servo runs straight off 12 V.** The HTD-30H is rated 9–12.6 V, so no buck converter is needed. Keep the PSU at its factory 12.0 V; don't turn the adjustment pot up past 12.6 V.
 2. **The HTD-30H is a serial bus servo, not a PWM servo.** It takes position commands as packets (0–1000 = 0–240°) and can report its actual position, voltage, and temperature. So we can log the real gimbal angle, not just the commanded one. The old `firmware/tvc_controller` (PWM, Uno) **won't drive it**; use `firmware/flight_computer`.
-3. **The Teensy 4.1 is 3.3 V only, and its pins are not 5 V tolerant.** The servo bus idles at 5 V, so the Teensy ↔ BusLinker UART goes through a level shifter. The IMU is powered from the Teensy's 3.3 V pin so its I2C pull-ups stay at 3.3 V.
+3. **The Teensy 4.1 is 3.3 V only, and its pins are not 5 V tolerant.** The servo bus may idle at 5 V. We wire the Teensy ↔ BusLinker UART directly (it works on the bench), but the BusLinker's TX voltage into Teensy pin 7 must be measured; if it's ~5 V, add a 1 kΩ/2 kΩ divider (see [servo_bus](icd/servo_bus.md)). The IMU is powered from the Teensy's 3.3 V pin so its I2C pull-ups stay at 3.3 V.
 4. **The Teensy is powered from Pi USB.** The ESC's built-in 5 V BEC is **not used**. Its red wire is left disconnected, because the Teensy's VIN and USB 5 V are joined.
 5. **The EDF is throttle-capped in firmware** (`THROTTLE_MAX` in `config.h`) to stay under the 15 A fuse. Raise the cap only while watching an inline watt meter.
 
@@ -75,12 +75,12 @@ All grounds are tied together: PSU −V, ESC, BusLinker, Teensy, and IMU. The Pi
 |---|---|---|---|
 | 1 | Is ~180 W (15 A) enough EDF thrust? | | Estimate ≈ 5–7 N at 15 A [VERIFY]. The sim assumes `T_max = 6.5 N`. Measure on the thrust stand, then update `tvc_params.m`. |
 | 2 | ESC is 50 A continuous, but the EDF seller recommends 80 A | | OK while fuse-limited. Revisit if the fuse is ever raised. |
-| 3 | BusLinker serial header pin labels and logic level | | Read the silkscreen and measure the idle TX voltage on receipt (see [ICD servo bus](icd/servo_bus.md)). |
+| 3 | BusLinker TX voltage into the Teensy (no level shifter) | | Measure the idle TX voltage; add a 1 kΩ/2 kΩ divider if ~5 V (see [ICD servo bus](icd/servo_bus.md)). |
 | 4 | E-stop | | Recommended: a latching mains-rated E-stop on the AC input, plus firmware disarm. Required before any public demo. |
 | 5 | AC inlet fuse size | | Proposed: T5A slow-blow (our draw is ≤ 250 W ≈ 2.5 A AC). |
 | 6 | Servo latency and update rate | | Step-test it. The sim's `servo_refresh` / `servo_tau` need real numbers. |
 | 7 | Joystick | | Planned: USB gamepad on the Pi, which sends setpoints over the USB link. |
-| 8 | Carrier board for the Teensy (level shifter, connectors) | | Perfboard first, then maybe a KiCad PCB. |
+| 8 | Carrier board for the Teensy (connectors, divider if needed) | | Perfboard first, then maybe a KiCad PCB. |
 
 ## Documents
 

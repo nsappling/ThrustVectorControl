@@ -42,12 +42,8 @@ A short list of the considerations behind each part choice, to show *why* each p
 ### Servo bus adapter: [Hiwonder BusLinker V3.0](https://www.hiwonder.com/products/buslinker)
 - Converts the Teensy's 2-wire UART into the servo's 1-wire half-duplex bus.
 - Input range 5–14 V covers 12 V ✅. It has the HTD-30H's PH2.0 connector ✅.
-- Logic level on its serial header is unknown [VERIFY], hence the level shifter. Its current rating through the board is also unpublished [VERIFY against the 3 A servo stall current].
+- Logic level on its serial header is unknown [VERIFY]. We wire it to the Teensy directly, so measure its TX voltage; add a 1 kΩ/2 kΩ divider if it's ~5 V. Its current rating through the board is also unpublished [VERIFY against the 3 A servo stall current].
 - It also allows PC setup of the servo (ID, offsets, limits) over USB.
-
-### Level shifter: BSS138 4-channel, 3.3 ↔ 5 V
-- The Teensy isn't 5 V tolerant, and the servo bus idles at 5 V.
-- It has to pass 115200 baud cleanly; the BSS138 is good to well beyond that ✅.
 
 ### IMU: [GY-521 (MPU-6050)](https://www.amazon.com/dp/B07PY38BCB)
 - Gyro range has to cover the expected tilt rates: ±500 °/s used ✅.

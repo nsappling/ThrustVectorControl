@@ -1,26 +1,30 @@
 # ICD: Servo Bus (Teensy ↔ BusLinker ↔ HTD-30H)
 
-**Endpoints:** Teensy Serial2 → level shifter → BusLinker TTL header → servo bus → HTD-30H (ID 1)
-**Status:** Preliminary. The BusLinker header pinout and logic level still need checking.
+**Endpoints:** Teensy Serial2 → BusLinker TTL header (direct, no level shifter) → servo bus → HTD-30H (ID 1)
+**Status:** Working on the bench (team bring-up). The BusLinker TX voltage into the Teensy still needs measuring; see below.
 
 ## Connections
 
 | # | From | To | Wire | Notes |
 |---|---|---|---|---|
-| S1 | Teensy pin 8 (TX2) | Level shifter LV2 | 26 AWG | |
-| S2 | Level shifter HV2 | BusLinker **RX** | 26 AWG | |
-| S3 | BusLinker **TX** | Level shifter HV1 | 26 AWG | |
-| S4 | Level shifter LV1 | Teensy pin 7 (RX2) | 26 AWG | |
-| S5 | Teensy 3.3V | Level shifter LV | 26 AWG | |
-| S6 | Teensy VIN (5 V) | Level shifter HV | 26 AWG | |
-| S7 | Teensy GND | Level shifter GND + BusLinker GND | 26 AWG | |
+| S1 | Teensy pin 8 (TX2) | BusLinker **RX** | 26 AWG | 3.3 V out. Works on the bench. |
+| S3 | BusLinker **TX** | Teensy pin 7 (RX2) | 26 AWG | ⚠️ Must be ≤ 3.3 V; see below |
+| S7 | Teensy GND | BusLinker GND | 26 AWG | Required |
 | S8 | BusLinker servo port (PH2.0) | HTD-30H | Supplied cable | Carries 12 V, GND, and the data line |
 | — | BusLinker power terminal | Servo branch (F2) | 18 AWG | See [power.md](power.md) |
 
 **BusLinker jumpers:** **Servo + TTL** when the Teensy is in control. Use **Servo + USB** only when setting up the servo from the Hiwonder PC software (for example, changing the ID or offset).
 
-### Why the level shifter
-The protocol doc's reference circuit pulls the bus up to **5 V**, and the Teensy 4.1 is **not 5 V tolerant**. Until we know the BusLinker header's logic level, assume 5 V and use the shifter. If you power the BusLinker and measure its idle TX pin at ≤ 3.3 V, the shifter can be dropped. Record that result here.
+### Check: is BusLinker TX safe for the Teensy?
+We run without a level shifter. The Teensy 4.1's pins are **not 5 V tolerant**, and the protocol doc's reference circuit pulls the bus up to 5 V, so measure this once:
+
+1. Power the BusLinker (12 V on its terminal), **unplug the TX wire from the Teensy**, and measure BusLinker TX to GND with a meter while the bus is idle.
+2. **≤ 3.3 V:** direct wiring is fine. Record the reading below.
+3. **Around 5 V:** add a resistor divider on S3: BusLinker TX → **1 kΩ** → Teensy pin 7, and pin 7 → **2 kΩ** → GND. That gives about 3.3 V. Two resistors, no new parts to order; fine at 115200 baud.
+
+Teensy TX (3.3 V) into BusLinker RX is fine either way: it already works.
+
+Measured idle TX voltage: ______ V (date: ______)
 
 ## Protocol (per [Hiwonder protocol doc](../datasheets/Hiwonder_bus_servo_protocol.pdf))
 
@@ -52,7 +56,7 @@ Once the gimbal is built, write `ANGLE_LIMIT_WRITE` so the servo itself can't dr
 
 ## Verification checklist
 - [ ] BusLinker header pin labels recorded: ______
-- [ ] Idle TX voltage measured: ______ V
+- [ ] Idle TX voltage measured (above): ______ V
 - [ ] `firmware/tests/servo_bus_test` reads the ID, voltage (≈ 12 V), and position
 - [ ] Center (500) means gimbal straight; trim recorded: ______ counts
 - [ ] Direction: positive gimbal command tilts the fan the way `SERVO_DIR` expects

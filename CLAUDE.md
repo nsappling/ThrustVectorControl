@@ -18,7 +18,7 @@ Team: Nate Sapp, Warren Schindler, Kailash Gupta-Verma, Alec Garcia.
 ## Hardware (preliminary, see docs/)
 
 - Mean Well LRS-600-12 PSU (12 V, 50 A). EDF branch: 15 A fuse, 12 AWG, XT60 → Hobbywing Skywalker 50A V2 ESC → JFtech 64 mm 4300 KV EDF (3.5 mm bullets). Servo branch: 5 A fuse, 18 AWG → Hiwonder BusLinker V3 → HTD-30H bus servo (runs directly on 12 V).
-- Teensy 4.1: **3.3 V logic, not 5 V tolerant.** Powered from Pi USB. The ESC's BEC is not used. The Teensy ↔ BusLinker UART goes through a BSS138 level shifter.
+- Teensy 4.1: **3.3 V logic, not 5 V tolerant.** Powered from Pi USB. The ESC's BEC is not used. The Teensy ↔ BusLinker UART (Serial2, pins 7/8) is wired directly with no level shifter; BusLinker TX into pin 7 must be ≤ 3.3 V (measure; add a 1 kΩ/2 kΩ divider if ~5 V). The IMU INT pin is not used.
 - The HTD-30H is a **serial bus servo** (Hiwonder protocol, 115200 baud, 0–1000 counts = 0–240°), not PWM.
 - The EDF can draw ~50 A, so firmware caps throttle (`THROTTLE_MAX`) to stay under the 15 A fuse.
 - Numbers tagged [VERIFY] in the docs are unconfirmed; don't present them as fact.

@@ -11,10 +11,10 @@
 // PINS (Teensy 4.1 -- 3.3 V logic, NOT 5 V tolerant)
 // =====================================================================
 constexpr int PIN_ESC     = 2;    // PWM throttle to the ESC signal wire
-constexpr int PIN_IMU_INT = 3;    // GY-521 INT (reserved, unused for now)
+constexpr int PIN_IMU_INT = 3;    // GY-521 INT: NOT wired (IMU is polled). Reserved.
 constexpr int PIN_LED     = 13;   // onboard LED: shows the state
 
-#define SERVO_BUS_SERIAL Serial2  // pins 7 (RX2) / 8 (TX2), through the level shifter to the BusLinker
+#define SERVO_BUS_SERIAL Serial2  // pins 7 (RX2) / 8 (TX2), wired directly to the BusLinker (no shifter)
 constexpr uint32_t SERVO_BUS_BAUD = 115200;   // [SPEC] HTD-30H default
 constexpr uint8_t  SERVO_ID       = 1;        // [SPEC] factory default ID
 

@@ -1,4 +1,4 @@
-# TVC demonstrator wiring harness (preliminary, rev A)
+# TVC demonstrator wiring harness (preliminary, rev B: as built, no level shifter, IMU INT not used)
 #
 # Source for tvc_harness.svg / .png / .bom.tsv. Edit THIS file, then regenerate:
 #   pip install wireviz   (also needs Graphviz: brew/apt install graphviz)
@@ -38,17 +38,14 @@ connectors:
     type: Hiwonder HTD-30H (ID 1)
     subtype: PH2.0-3P, supplied cable
     pinlabels: [GND, V+, SIG]
-  SHIFTER:
-    type: BSS138 level shifter (4ch)
-    pinlabels: [LV, LV1, LV2, GND, HV, HV1, HV2]
   TEENSY:
     type: Teensy 4.1
     subtype: 3.3V logic, NOT 5V tolerant
-    pinlabels: ['7 RX2', '8 TX2', '2 ESC', '3 INT', '18 SDA', '19 SCL', 3V3, VIN 5V, GND, USB]
+    pinlabels: ['7 RX2', '8 TX2', '2 ESC', '18 SDA', '19 SCL', 3V3, GND, USB]
   IMU:
     type: GY-521 (MPU-6050)
     subtype: I2C addr 0x68
-    pinlabels: [VCC, GND, SCL, SDA, INT]
+    pinlabels: [VCC, GND, SCL, SDA, INT (NC), AD0 (NC)]
   PI:
     type: Raspberry Pi 5
     subtype: own 5V 5A USB-C supply
@@ -108,24 +105,19 @@ cables:
     colors: [WH, BK]
     wirelabels: [E3, E4]
     notes: ESC red BEC wire left disconnected
-  UART_HV:
+  UART:
     category: bundle
     gauge: 26 AWG
-    wirecount: 4
-    colors: [OG, YE, RD, BK]
-    wirelabels: [S3 TX to HV1, S2 HV2 to RX, S6 5V, S7 GND]
-  UART_LV:
-    category: bundle
-    gauge: 26 AWG
-    wirecount: 4
-    colors: [OG, YE, RD, BK]
-    wirelabels: [S4 LV1 to RX2, S1 TX2 to LV2, S5 3V3, S7 GND]
+    wirecount: 3
+    colors: [OG, YE, BK]
+    wirelabels: [S3 TX to RX2, S1 TX2 to RX, S7 GND]
+    notes: Direct, no level shifter. MEASURE BusLinker TX idle voltage; if above 3.6 V add 1k series + 2k to GND on S3
   I2C:
     category: bundle
     gauge: 26 AWG
-    wirecount: 5
-    colors: [RD, BK, YE, GN, WH]
-    wirelabels: [I1, I2, I3, I4, I5]
+    wirecount: 4
+    colors: [RD, BK, YE, GN]
+    wirelabels: [I1, I2, I3, I4]
   USB:
     type: USB-A to micro-USB data cable
     wirecount: 1
@@ -168,22 +160,13 @@ connections:
   # --- Signals ---
   - - ESC: [6, 8]
     - ESC_SIG: [1, 2]
-    - TEENSY: [3, 9]
-  - - BUSLINKER: [3, 4]
-    - UART_HV: [1, 2]
-    - SHIFTER: [6, 7]
-  - - SHIFTER: [5, 4]
-    - UART_HV: [3, 4]
-  - - SHIFTER: [2, 3, 1, 4]
-    - UART_LV: [1, 2, 3, 4]
-    - TEENSY: [1, 2, 7, 9]
-  - - UART_HV: [3]
-    - TEENSY: [8]
-  - - UART_HV: [4]
-    - BUSLINKER: [5]
-  - - IMU: [1, 2, 3, 4, 5]
-    - I2C: [1, 2, 3, 4, 5]
-    - TEENSY: [7, 9, 6, 5, 4]
-  - - TEENSY: [10]
+    - TEENSY: [3, 7]
+  - - BUSLINKER: [3, 4, 5]
+    - UART: [1, 2, 3]
+    - TEENSY: [1, 2, 7]
+  - - IMU: [1, 2, 3, 4]
+    - I2C: [1, 2, 3, 4]
+    - TEENSY: [6, 7, 5, 4]
+  - - TEENSY: [8]
     - USB: [1]
     - PI: [1]

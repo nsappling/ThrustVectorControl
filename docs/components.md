@@ -109,7 +109,7 @@ Some Hiwonder docs show 1 Mbaud and 4096-count positions. Those are for their ne
 | Fork/ring terminals | All PSU screw-terminal connections; no bare wire under the screws |
 
 ## Recommended additions (not yet ordered)
-- **4-channel BSS138 level shifter** (3.3 V ↔ 5 V) for the Teensy ↔ BusLinker UART. About $1.
+- **1 kΩ + 2 kΩ resistors**, only if the BusLinker TX measures ~5 V (divider into Teensy pin 7). No level shifter is used.
 - **Inline XT60 watt meter** to set the throttle cap and log EDF current.
 - **IEC C14 inlet with switch and fuse holder**, plus a 3-wire grounded cord.
 - **Latching E-stop**, mains-rated, on the AC input.

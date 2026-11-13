@@ -11,7 +11,7 @@
 | I2 | GND | GND | 26 AWG | |
 | I3 | SCL | 19 (SCL) | 26 AWG | |
 | I4 | SDA | 18 (SDA) | 26 AWG | |
-| I5 | INT | 3 | 26 AWG | Optional, reserved for data-ready |
+| — | INT | (open) | — | Not needed: the firmware polls the IMU every loop. Pin 3 stays reserved if we ever want data-ready interrupts. |
 | — | AD0 | (open) | — | Address 0x68 |
 | — | XDA, XCL | (open) | — | |
 

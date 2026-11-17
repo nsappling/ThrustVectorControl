@@ -8,7 +8,9 @@
  *
  * Teensy 4.1          BusLinker V3.0
  * -----------------------------------
- * Pin 8 (TX2)  -----> RX
+ * Pin 8 (TX2)  -----> RXC
+ C
+ 
  * Pin 7 (RX2)  <----- TX (3.3V compatible or level-shifted)
  * GND          ------ GND
  *

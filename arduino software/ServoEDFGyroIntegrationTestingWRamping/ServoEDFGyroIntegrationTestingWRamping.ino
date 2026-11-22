@@ -948,8 +948,14 @@ void setup() {
   // MPU6050 I2C communication
   Wire.begin();
 
-  // Limit time spent waiting for an I2C response
+  // Limit time spent waiting for an I2C response.
+  // setWireTimeout() only exists in the AVR (Uno) Wire library. The Teensy
+  // Wire library doesn't have it (calling it is a compile error), so only
+  // call it on AVR boards. On Teensy, a failed read shows up as the
+  // "MPU6050 communication lost" error instead.
+#if defined(ARDUINO_ARCH_AVR)
   Wire.setWireTimeout(3000, true);
+#endif
 
   // ----------------------------------------------------------
   // Initialize ESC
